@@ -1,0 +1,9 @@
+Ver comandos: php artisan list
+
+Criar controlador: php artisan make:controller NomeController
+
+Listar rotas do projeto: php artisan route:list
+
+Criar model: php artisan make:model NomeModel
+
+Criar model com migration: php artisan make:model NomeModel -m
