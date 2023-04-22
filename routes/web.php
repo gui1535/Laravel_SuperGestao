@@ -27,7 +27,7 @@ Route::post('/contato', 'ContatoController@salvar')->name('site.contato');
 Route::get('/login/{erro?}', 'LoginController@index')->name('site.login');
 Route::post('/login', 'LoginController@autenticar')->name('site.login');
 
-Route::middleware('autenticacao:padrao,visitante,p3,p4')->prefix('/app')->group(function() {
+Route::middleware('autenticacao')->prefix('/app')->group(function() {
     Route::get('/home', 'HomeController@index')->name('app.home');
     Route::get('/sair', 'LoginController@sair')->name('app.sair');
         

@@ -104,10 +104,15 @@ span {
     cursor: pointer;
 }
 
-.w-90{
-    width: 90%;
+.w-90 {
+    width: 90% !important;
 }
 
-.color-social-icon{
+.w-30 {
+    width: 30% !important;
+}
+
+
+.color-social-icon {
     color: #1b3956;
 }

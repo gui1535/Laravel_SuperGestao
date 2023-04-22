@@ -3,23 +3,45 @@
 @section('titulo', $titulo)
 
 @section('conteudo')
-    <div class="conteudo-pagina">
-        <div class="titulo-pagina">
-            <h1>Login</h1>
+    <div class="container mt-5">
+        <div class="row">
+            <div class="col-md-12 p-1">
+                <h1 class="text-center">Login</h1>
+                <div class="d-flex justify-content-center align-items-center mt-1">
+                    @if ($errors->any())
+                        <div class="w-30 alert alert-danger mb-1 mt-3">
+                            <ul>
+                                @foreach ($errors->all() as $error)
+                                    <li>{{ $error }}</li>
+                                @endforeach
+                            </ul>
+                        </div>
+                    @endif
+                </div>
+            </div>
         </div>
 
-        <div class="informacao-pagina">
-            <div style="width:30%; margin-left: auto; margin-right: auto;">
-                <form action={{ route('site.login') }} method="post">
-                    @csrf
-                    <input name="email" value="{{ old('email') }}" type="text" placeholder="Email" class="borda-preta">
-                    
-                    <input name="password" type="password" placeholder="Senha" class="borda-preta">
+        <div class="row">
+            <div class="col-md-12 p-1">
+                <div class="mt-4 d-flex justify-content-center align-items-center">
+                    <form action={{ route('site.login') }} method="post" class="w-30">
+                        @csrf
+                        <div class="mb-3">
+                            <label for="email">Email</label>
+                            <input name="email" value="{{ old('email') }}" type="text" placeholder="Email"
+                                id="email" class="form-control">
+                        </div>
 
-                    <button type="submit" class="borda-preta">Acessar</button>
-                </form>
+                        <div class="mb-3">
+                            <label for="password">Senha</label>
+                            <input name="password" id="password" type="password" placeholder="Senha" class="form-control">
+                        </div>
+                        <br>
+                        <button type="submit" class="btn btn-success w-100">Acessar</button>
+                    </form>
+                </div>
             </div>
-        </div>  
+        </div>
     </div>
 
 @endsection
