@@ -13,6 +13,7 @@
     <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
     <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
     <![endif]-->
+    @stack("styles")
 </head>
 
 <body>
@@ -42,6 +43,8 @@
     <script src="{{ asset('plugins/chartist/dist/chartist.min.js') }}"></script>
     <script src="{{ asset('plugins/chartist-plugin-tooltips/dist/chartist-plugin-tooltip.min.js') }}"></script>
     <script src="{{ asset('js/app/pages/dashboards/dashboard1.js') }}"></script>
+
+    @stack("scripts")
 </body>
 
 </html>
