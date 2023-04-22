@@ -1,104 +1,61 @@
 <?php
 
-use App\Http\Controllers\ContatoController;
-use App\Http\Controllers\PrincipalController;
-use App\Http\Controllers\SobreNosController;
-use App\Http\Controllers\TesteController;
-use App\Http\Controllers\FornecedorController;
 use Illuminate\Support\Facades\Route;
 
 /*
 |--------------------------------------------------------------------------
 | Web Routes
 |--------------------------------------------------------------------------
+|
+| Here is where you can register web routes for your application. These
+| routes are loaded by the RouteServiceProvider within a group which
+| contains the "web" middleware group. Now create something great!
+|
+*/
+/*
+Route::get('/', function () {
+    return 'Olá, seja vem vindo ao curso!';
+});
 */
 
-Route::get('/', [PrincipalController::class, 'Principal'])->name('site.index'); // Pagina Principal
+Route::get('/', 'PrincipalController@principal')->name('site.index')->middleware('log.acesso');
 
-Route::get('/sobre-nos', [SobreNosController::class, 'SobreNos'])->name('site.sobrenos'); // Pagina Sobre-nos
+Route::get('/sobre-nos', 'SobreNosController@sobreNos')->name('site.sobrenos');
+    
+Route::post('/contato', 'ContatoController@salvar')->name('site.contato');
 
-Route::get('/contato', [ContatoController::class, 'Contato'])->name('site.contato'); // Pagina Contato
+Route::get('/login/{erro?}', 'LoginController@index')->name('site.login');
+Route::post('/login', 'LoginController@autenticar')->name('site.login');
 
-Route::post('/contato', [ContatoController::class, 'Contato'])->name('site.contato'); // Pagina Contato
+Route::middleware('autenticacao:padrao,visitante,p3,p4')->prefix('/app')->group(function() {
+    Route::get('/home', 'HomeController@index')->name('app.home');
+    Route::get('/sair', 'LoginController@sair')->name('app.sair');
+        
+    Route::get('/fornecedor', 'FornecedorController@index')->name('app.fornecedor');
+    Route::post('/fornecedor/listar', 'FornecedorController@listar')->name('app.fornecedor.listar');
+    Route::get('/fornecedor/listar', 'FornecedorController@listar')->name('app.fornecedor.listar');
+    Route::get('/fornecedor/adicionar', 'FornecedorController@adicionar')->name('app.fornecedor.adicionar');
+    Route::post('/fornecedor/adicionar', 'FornecedorController@adicionar')->name('app.fornecedor.adicionar');
+    Route::get('/fornecedor/editar/{id}/{msg?}', 'FornecedorController@editar')->name('app.fornecedor.editar');
+    Route::get('/fornecedor/excluir/{id}', 'FornecedorController@excluir')->name('app.fornecedor.excluir');
+    
+    //produtos
+    Route::resource('produto', 'ProdutoController');
 
+    //produtos detalhes
+    Route::resource('produto-detalhe', 'ProdutoDetalheController');
 
-Route::get('/login', function () {
-    return 'Login';
-})->name('site.login'); // Pagina Login
-
-// Inicia grupo de rotas '/app'
-route::prefix('/app')->group(function () {
-
-    Route::get('/clientes', function () {
-        return 'Clientes';
-    })->name('app.clientes'); // Pagina cliente
-
-    Route::get('/fornecedores', [FornecedorController::class, 'index'])->name('app.fornecedores'); // Pagina Fornecedores
-
-    Route::get('/produtos', function () {
-        return 'Produtos';
-    })->name('app.produtos'); // Pagina Produtos
-
-}); // Fim grupo de rotas
-
-Route::get('/teste/{p1}/{p2}', [TesteController::class, 'teste'])->name('teste'); // Pagina teste
-
-route::fallback(function () {
-    echo 'A rota acessada nao existe. <a href="' . route('site.index') . '">Clique aqui</a> para ir para pagina inicial';
+    Route::resource('cliente', 'ClienteController');
+    Route::resource('pedido', 'PedidoController');
+    //Route::resource('pedido-produto', 'PedidoProdutoController');
+    Route::get('pedido-produto/create/{pedido}', 'PedidoProdutoController@create')->name('pedido-produto.create');
+    Route::post('pedido-produto/store/{pedido}', 'PedidoProdutoController@store')->name('pedido-produto.store');
+    //Route::delete('pedido-produto.destroy/{pedido}/{produto}', 'PedidoProdutoController@destroy')->name('pedido-produto.destroy');
+    Route::delete('pedido-produto.destroy/{pedidoProduto}/{pedido_id}', 'PedidoProdutoController@destroy')->name('pedido-produto.destroy');
 });
 
-/*
---------------------------------------------------------------------------------
-Route::get(
-    '/contato/{nome}/{categoria_id}',
-    function (
-        string $nome = 'Desconhecido',
-        int $categoria_id = 1 // Categoria 1 => Informação
-    ) {
-        echo 'Estamos aqui:  ' . $nome . ' - ' . $categoria_id;
-    }
-    // 
-)->where(
-    'categoria_id', // Primeiro parametro
-    '[0-9]+' // categoria_id só vai receber numero de 0 a 9 ou maior
-)->where(
-    'nome', // Primeiro Parametro
-    '[A-Z a-z]+' // nome só vai receber letra de A-Z a-z com mais de 0 caracter
-);
+Route::get('/teste/{p1}/{p2}', 'TesteController@teste')->name('teste');
 
---------------------------------------------------------------------------------
-
-// Caso a variavel "a" não receba pararametro, aparecerá "erro"
-Route::get('/pagina/{nome}/{a?}', function (string $nome, string $a = 'erro') {
-    echo 'Ola ' . $nome . ' - ' . $a;
-}); 
-
---------------------------------------------------------------------------------
-
-//Redireciona '/rota1' para a '/rota2'
-Route::get('/rota1', function () {
-    return redirect()->route('site.rota2');
-})->name('site.rota1');
-
-Route::get('/rota2', function () {
-    echo 'Rota 2';
-})->name('site.rota2');
-
---------------------------------------------------------------------------------
-
-// Envio de parametros pelas rotas:
-Route::get('/contato/{nome}/{a}', function (string $nome, string $a) {
-    echo 'Ola ' . $nome . ' - ' . $a;
-}); 
-
---------------------------------------------------------------------------------
-
-//Verbos HTTP:
-get
-post
-put
-patch
-delete
-options
---------------------------------------------------------------------------------
-*/
+Route::fallback(function() {
+    echo 'A rota acessada não existe. <a href="'.route('site.index').'">clique aqui</a> para ir para página inicial';
+});

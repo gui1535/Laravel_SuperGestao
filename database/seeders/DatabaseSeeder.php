@@ -2,7 +2,8 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+use Database\Seeders\SiteContatoSeeder;
+use Database\Seeders\UserSeeder;
 use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
@@ -14,6 +15,10 @@ class DatabaseSeeder extends Seeder
      */
     public function run()
     {
-        // \App\Models\User::factory(10)->create();
+        // $this->call(UsersTableSeeder::class);
+        $this->call(FornecedorSeeder::class);
+        $this->call(MotivoContatoSeeder::class);
+        $this->call(SiteContatoSeeder::class);
+        $this->call(UserSeeder::class);
     }
 }

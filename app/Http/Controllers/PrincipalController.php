@@ -3,11 +3,14 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Models\MotivoContato;
 
 class PrincipalController extends Controller
 {
-    //
-    public function Principal(){
-        return view('site.principal'); //retorne a view que esta na pasta 'site' com nome de 'principal'
+    public function principal() {
+
+        $motivo_contatos = MotivoContato::all();
+
+        return view('site.principal', ['motivo_contatos' => $motivo_contatos]);
     }
 }
