@@ -23,11 +23,8 @@
     </div>
 
     <div class="container-fluid">
-
         <div class="row">
             Aqui é a HOME
         </div>
-
-
     </div>
 @endsection
