@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class AlterPedidosProdutosAddQuantidade extends Migration
+class CreatePedidosTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,8 +13,12 @@ class AlterPedidosProdutosAddQuantidade extends Migration
      */
     public function up()
     {
-        Schema::table('pedidos_produtos', function (Blueprint $table) {
-            $table->integer('quantidade');
+        Schema::create('pedidos', function (Blueprint $table) {
+            $table->id();
+            $table->unsignedBigInteger('cliente_id');
+            $table->timestamps();
+
+            $table->foreign('cliente_id')->references('id')->on('clientes');
         });
     }
 
@@ -25,8 +29,6 @@ class AlterPedidosProdutosAddQuantidade extends Migration
      */
     public function down()
     {
-        Schema::table('pedidos_produtos', function (Blueprint $table) {
-            $table->dropColumn('quantidade');
-        });
+        Schema::dropIfExists('pedidos');
     }
 }

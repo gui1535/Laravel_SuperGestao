@@ -21,6 +21,9 @@ class CreateFornecedoresTable extends Migration
             $table->string('site', 150)->nullable(true);
             $table->timestamps();
             $table->softDeletes();
+
+            $table->unsignedInteger('empresa_id');
+            $table->foreign('empresa_id')->references('id')->on('empresas');
         });
     }
 
