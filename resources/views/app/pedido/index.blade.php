@@ -66,7 +66,7 @@
                         <table class="table table-c">
                             <thead>
                                 <tr>
-                                    <th class="text-center" scope="col">ID</th>
+                                    <th class="text-center" scope="col">Código</th>
                                     <th scope="col">Cliente</th>
                                     <th class="text-center">Ações</th>
                                 </tr>
@@ -74,33 +74,26 @@
                             <tbody>
                                 @forelse ($pedidos as $pedido)
                                     <tr>
-                                        <td class="text-center">{{ $pedido->id }}</td>
+                                        <td class="text-center">{{ $pedido->codigo }}</td>
                                         <td>{{ $pedido->cliente->nome }}</td>
                                         <td class="text-center d-flex justify-content-center">
-                                            <a href="{{ route('pedido.show', ['pedido' => $pedido->id]) }}">
+                                            <a href="{{ route('pedido.show', ['pedido' => Crypt::encrypt($pedido->id)]) }}">
                                                 <button class="btn">
                                                     <i class="mdi mdi-eye fs-4"></i>
                                                 </button>
                                             </a>
 
-                                            <a href="{{route('pedido-produto.create', ['pedido' => $pedido->id]) }}">
-                                                <button class="btn">
-                                                    <i class="mdi mdi-plus-box-outline fs-4"></i>
-                                                </button>
-                                            </a>
-
-                                            <a
-                                                href="{{route('pedido.edit', ['pedido' => $pedido->id]) }}">
+                                            <a href="{{ route('pedido.edit', ['pedido' => Crypt::encrypt($pedido->id)]) }}">
                                                 <button class="btn">
                                                     <i class="mdi mdi-lead-pencil fs-4"></i>
                                                 </button>
                                             </a>
 
                                             <form method="POST"
-                                                action="{{  route('pedido.destroy', ['pedido' => $pedido->id])  }}">
+                                                action="{{ route('pedido.destroy', ['pedido' => Crypt::encrypt($pedido->id)]) }}">
                                                 @method('DELETE')
                                                 @csrf
-                                                <button type="button" data-nome="{{ $pedido->id }}"
+                                                <button type="button" data-codigo="{{ $pedido->codigo }}"
                                                     class="btn btn-delete-pedido">
                                                     <i class="mdi mdi-delete-circle fs-4"></i>
                                                 </button>
@@ -140,3 +133,7 @@
     </div>
 
 @endsection
+
+@push('scripts')
+    <script src="{{ asset('js/app/pages/pedido/pedido.js') }}"></script>
+@endpush

@@ -3,7 +3,7 @@
         [
             'route' => route('app.home'),
             'name' => 'Home',
-            'icon' => 'mdi mdi-account-multiple',
+            'icon' => 'mdi mdi-view-dashboard',
         ],
         [
             'route' => route('cliente.index'),
