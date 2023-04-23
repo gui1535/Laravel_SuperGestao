@@ -15,7 +15,9 @@ class CreateClientesPedidosProdutos extends Migration
     {
         Schema::create('clientes', function (Blueprint $table) {
             $table->id();
-            $table->string('nome', 50);
+            $table->string('nome', 60);
+            $table->string('email', 60);
+            $table->string('observacoes', 255)->nullable(true);
             $table->timestamps();
         });
 
