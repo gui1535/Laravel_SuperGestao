@@ -1649,7 +1649,7 @@ progress {
     color: #67757c;
     background-color: #fff;
     background-clip: padding-box;
-    border: 1px solid #ecf0f2;
+    border: 1px solid #d0d0d0 !important;
     -webkit-appearance: none;
     appearance: none;
     border-radius: 2px;
@@ -1822,7 +1822,7 @@ textarea.form-control-lg {
     background-repeat: no-repeat;
     background-position: right 0.75rem center;
     background-size: 16px 12px;
-    border: 1px solid #ecf0f2;
+    border: 1px solid #d0d0d0 !important;
     border-radius: 2px;
     -webkit-appearance: none;
     appearance: none;
@@ -2137,7 +2137,7 @@ textarea.form-control-lg {
     text-align: center;
     white-space: nowrap;
     background-color: #f6f8fb;
-    border: 1px solid #ecf0f2;
+    border: 1px solid #d0d0d0 !important;
     border-radius: 2px;
 }
 .input-group-lg > .btn,
@@ -10418,6 +10418,28 @@ html body .waves-notransition {
     }
 }
 
-.bootbox button{
+.bootbox button {
     border: 0;
+}
+
+.select2-selection__arrow {
+    height: 100% !important;
+}
+
+.select2-selection.select2-selection--single {
+    border: 1px solid #d0d0d0 !important;
+}
+
+.select2-container .select2-selection--single {
+    height: 38px;
+}
+
+.select2-selection__rendered {
+    height: 100% !important;
+    display: flex !important;
+    align-items: center !important;
+}
+
+.bg-blue-primary {
+    background-color: #1a9bfc;
 }
