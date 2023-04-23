@@ -27,18 +27,19 @@
                     <form action={{ route('site.login') }} method="post" class="w-30">
                         @csrf
                         <div class="mb-3">
-                            <label for="email">Email</label>
-                            <input name="email" value="{{ old('email') }}" type="text" placeholder="Email"
+                            <label for="email" class="required">Email</label>
+                            <input name="email" maxlength="60" required value="{{ old('email') }}" type="text" placeholder="Email"
                                 id="email" class="form-control">
                         </div>
 
                         <div class="mb-3">
-                            <label for="password">Senha</label>
-                            <input name="password" id="password" type="password" placeholder="Senha" class="form-control">
+                            <label for="password" class="required">Senha</label>
+                            <input name="password"  maxlength="60" required id="password" type="password" placeholder="Senha"
+                                class="form-control">
                         </div>
                         <p>
                             Não possui cadastro?
-                            <a href="" class="text-decoration-none">
+                            <a href="{{ route('site.cadastrar') }}" class="text-decoration-none">
                                 Cadastre-se
                             </a>
                         </p>
