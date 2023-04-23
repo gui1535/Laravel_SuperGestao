@@ -2,11 +2,23 @@
 
 namespace App\Http\Controllers;
 
+use App\Exceptions\ClienteDeleteException;
+use App\Exceptions\ClienteNotFoundException;
+use App\Exceptions\ClienteUpdateException;
+use App\Exceptions\CreateClienteException;
+use App\Exceptions\ErrorUnexpectedException;
+use App\Http\Requests\ClienteRequest;
 use Illuminate\Http\Request;
 use App\Models\Cliente;
+use Exception;
+use Facade\FlareClient\Http\Client;
+use Illuminate\Support\Facades\Crypt;
 
 class ClienteController extends Controller
 {
+    private Request $request;
+    private Cliente $cliente;
+
     /**
      * Display a listing of the resource.
      *
@@ -34,25 +46,32 @@ class ClienteController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(ClienteRequest $request)
     {
-        $regras = [
-            'nome' => 'required|min:3|max:40'
-        ];
+        try {
+            $this->request = $request;
 
-        $feedback = [
-            'required' => 'O campo :attribute deve ser preenchido',
-            'nome.min' => 'O campo nome de ter no mínimo 3 caracteres',
-            'nome.max' => 'O campo nome de ter no máximo 40 caracteres',
-        ];
+            $this->criaCliente();
 
-        $request->validate($regras, $feedback);
-        
-        $cliente = new Cliente();
-        $cliente->nome = $request->get('nome');
-        $cliente->save();
+            return redirect()->route('cliente.index')->with('success', 'Cliente cadastrado com sucesso!');
+        } catch (CreateClienteException $e) {
+            return $e->render();
+        } catch (Exception $e) {
+            return ErrorUnexpectedException::render();
+        }
+    }
 
-        return redirect()->route('cliente.index');
+    private function criaCliente()
+    {
+        try {
+            $this->cliente = new Cliente();
+            $this->cliente->nome = $this->request->input('nome');
+            $this->cliente->email = $this->request->input('email');
+            $this->cliente->observacoes = $this->request->input('observacoes');
+            $this->cliente->save();
+        } catch (\Throwable $th) {
+            throw new CreateClienteException();
+        }
     }
 
     /**
@@ -74,7 +93,29 @@ class ClienteController extends Controller
      */
     public function edit($id)
     {
-        //
+        try {
+            $id = Crypt::decrypt($id);
+
+            $this->getCliente($id);
+
+            $cliente = $this->cliente;
+
+            return view('app.cliente.create', compact('cliente'));
+        } catch (ClienteNotFoundException $e) {
+            return $e->render();
+        } catch (Exception $th) {
+            return ErrorUnexpectedException::render();
+        }
+    }
+
+    private function getCliente($id)
+    {
+        $cliente = Cliente::find($id);
+        if ($cliente) {
+            $this->cliente = $cliente;
+        } else {
+            throw new ClienteNotFoundException();
+        }
     }
 
     /**
@@ -84,9 +125,37 @@ class ClienteController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(ClienteRequest $request, $id)
     {
-        //
+        try {
+            $id = Crypt::decrypt($id);
+
+            $this->request = $request;
+
+            $this->getCliente($id);
+
+            $this->updateCliente();
+
+            return redirect()->back()->with('success', 'Cliente atualizado com sucesso!');
+        } catch (ClienteNotFoundException $e) {
+            return $e->render();
+        } catch (ClienteUpdateException $e) {
+            return $e->render();
+        } catch (Exception $th) {
+            return ErrorUnexpectedException::render();
+        }
+    }
+
+    private function updateCliente()
+    {
+        try {
+            $this->cliente->nome = $this->request->input('nome');
+            $this->cliente->email = $this->request->input('email');
+            $this->cliente->observacoes = $this->request->input('observacoes');
+            $this->cliente->save();
+        } catch (\Throwable $th) {
+            throw new ClienteUpdateException();
+        }
     }
 
     /**
@@ -97,6 +166,27 @@ class ClienteController extends Controller
      */
     public function destroy($id)
     {
-        //
+        try {
+            $id = Crypt::decrypt($id);
+
+            $this->getCliente($id);
+
+            $this->deletarCliente();
+
+            return redirect()->back()->with('success', 'Cliente deletado com sucesso!');
+        } catch (ClienteDeleteException $e) {
+            return $e->render();
+        } catch (Exception $th) {
+            return ErrorUnexpectedException::render();
+        }
+    }
+
+    private function deletarCliente()
+    {
+        try {
+            $this->cliente->delete();
+        } catch (\Throwable $th) {
+            throw new ClienteDeleteException();
+        }
     }
 }
