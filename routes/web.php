@@ -22,8 +22,8 @@ Route::post('/contato', 'ContatoController@salvar')->name('site.contato');
 Route::get('/login', 'LoginController@index')->name('site.login');
 Route::post('/login', 'LoginController@autenticar')->name('site.login');
 
-Route::get('/cadastrar-se', 'LoginController@index')->name('site.cadastrar');
-Route::post('/cadastrar-se', 'LoginController@cadastrar')->name('site.cadastrar');
+Route::get('/cadastrar-se', 'EmpresaController@indexCadastro')->name('site.cadastrar');
+Route::post('/cadastrar-se', 'EmpresaController@cadastrar')->name('site.cadastrar');
 
 Route::middleware('autenticacao')->prefix('/app')->group(function() {
     Route::get('/home', 'HomeController@index')->name('app.home');
