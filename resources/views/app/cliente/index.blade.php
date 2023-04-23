@@ -2,77 +2,8 @@
 
 @section('titulo', 'Cliente')
 @push('styles')
-    <style>
-        nav svg {
-            width: 28px !important;
-            padding: 7px 5px;
-        }
-    </style>
 @endpush
 @section('conteudo')
-    {{-- <div class="conteudo-pagina">
-
-        <div class="menu">
-            <ul>
-                <li><a href="{{ route('cliente.create') }}">Novo</a></li>
-                <li><a href="">Consulta</a></li>
-            </ul>
-        </div>
-
-        <div class="informacao-pagina">
-            <div style="width: 90%; margin-left: auto; margin-right: auto;">
-                <table border="1" width="100%">
-                    <thead>
-                        <tr>
-                            <th>Nome</th>
-                            <th></th>
-                            <th></th>
-                            <th></th>
-                        </tr>
-                        </head>
-
-                    <tbody>
-                        @foreach ($clientes as $cliente)
-                            <tr>
-                                <td>{{ $cliente->nome }}</td>
-                                <td><a href="{{ route('cliente.show', ['cliente' => $cliente->id]) }}">Visualizar</a></td>
-                                <td>
-                                    <form id="form_{{ $cliente->id }}" method="post"
-                                        action="{{ route('cliente.destroy', ['cliente' => $cliente->id]) }}">
-                                        @method('DELETE')
-                                        @csrf
-                                        <!--<button type="submit">Excluir</button>-->
-                                        <a href="#"
-                                            onclick="document.getElementById('form_{{ $cliente->id }}').submit()">Excluir</a>
-                                    </form>
-                                </td>
-                                <td><a href="{{ route('cliente.edit', ['cliente' => $cliente->id]) }}">Editar</a></td>
-                            </tr>
-                        @endforeach
-                    </tbody>
-                </table>
-
-                {{ $clientes->appends($request)->links() }}
-
-                <!--
-                                                                            <br>
-                                                                            {{ $clientes->count() }} - Total de registros por página
-                                                                            <br>
-                                                                            {{ $clientes->total() }} - Total de registros da consulta
-                                                                            <br>
-                                                                            {{ $clientes->firstItem() }} - Número do primeiro registro da página
-                                                                            <br>
-                                                                            {{ $clientes->lastItem() }} - Número do último registro da página
-
-                                                                            -->
-                <br>
-                Exibindo {{ $clientes->count() }} clientes de {{ $clientes->total() }} (de {{ $clientes->firstItem() }} a
-                {{ $clientes->lastItem() }})
-            </div>
-        </div>
-    </div> --}}
-
-
     <div class="page-breadcrumb">
         <div class="row align-items-center">
             <div class="col-9">
@@ -107,38 +38,79 @@
     <div class="container-fluid">
         <div class="row">
             <div class="col-12">
+                @if (session('success'))
+                    <div class="alert alert-success">
+                        {{ session('success') }}
+                    </div>
+                @endif
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-12">
+                @if ($errors->any())
+                    <div class="alert alert-danger">
+                        <ul>
+                            @foreach ($errors->all() as $error)
+                                <li>{{ $error }}</li>
+                            @endforeach
+                        </ul>
+                    </div>
+                @endif
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-12">
                 <div class="card">
                     <div class="table-responsive">
                         <table class="table table-c">
                             <thead>
                                 <tr>
                                     <th scope="col">Nome</th>
+                                    <th scope="col">Email</th>
                                     <th class="text-center">Ações</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                @foreach ($clientes as $cliente)
+                                @forelse ($clientes as $cliente)
                                     <tr>
                                         <td>{{ $cliente->nome }}</td>
-                                        <td class="text-center">
-                                            <button class="btn">
-                                                <i class="mdi mdi-delete-circle fs-4"></i>
-                                            </button>
+                                        <td>{{ $cliente->email }}</td>
+                                        <td class="text-center d-flex justify-content-center">
+                                            <a
+                                                href="{{ route('cliente.edit', ['cliente' => Crypt::encrypt($cliente->id)]) }}">
+                                                <button class="btn">
+                                                    <i class="mdi mdi-lead-pencil fs-4"></i>
+                                                </button>
+                                            </a>
 
-                                            <button class="btn">
-                                                <i class="mdi mdi-lead-pencil fs-4"></i>
-                                            </button>
+                                            <form method="POST"
+                                                action="{{ route('cliente.destroy', ['cliente' => Crypt::encrypt($cliente->id)]) }}">
+                                                @method('DELETE')
+                                                @csrf
+                                                <button type="button" data-nome="{{ $cliente->nome }}"
+                                                    class="btn btn-delete-cliente">
+                                                    <i class="mdi mdi-delete-circle fs-4"></i>
+                                                </button>
+                                            </form>
+
                                         </td>
                                     </tr>
-                                @endforeach
+                                @empty
+                                    <tr>
+                                        <td colspan="999" class="text-center text-danger">
+                                            Não há clientes cadastrados
+                                        </td>
+                                    </tr>
+                                @endforelse
                             </tbody>
                         </table>
                         <div class="w-100 d-flex justify-content-between">
                             <div class="">
                                 <span>
-                                    Exibindo {{ $clientes->count() }} clientes de {{ $clientes->total() }} (de
-                                    {{ $clientes->firstItem() }} a
-                                    {{ $clientes->lastItem() }})
+                                    Exibindo {{ $clientes->count() }} clientes de {{ $clientes->total() }}
+                                    @if (count($clientes) != 0)
+                                        (de{{ $clientes->firstItem() }} a {{ $clientes->lastItem() }})
+                                    @endif
                                 </span>
 
                             </div>
@@ -154,3 +126,7 @@
         </div>
     </div>
 @endsection
+
+@push('scripts')
+    <script src="{{ asset('js/app/pages/cliente/cliente.js') }}"></script>
+@endpush

@@ -46,6 +46,7 @@ Route::middleware('autenticacao')->prefix('/app')->group(function() {
     Route::resource('produto-detalhe', 'ProdutoDetalheController');
 
     Route::resource('cliente', 'ClienteController');
+    
     Route::resource('pedido', 'PedidoController');
     //Route::resource('pedido-produto', 'PedidoProdutoController');
     Route::get('pedido-produto/create/{pedido}', 'PedidoProdutoController@create')->name('pedido-produto.create');
