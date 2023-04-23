@@ -41,7 +41,7 @@ class EmpresaController extends Controller
 
             auth()->login($this->usuario);
 
-            return redirect()->route('app.home')->with('success', 'Empresa cadastrada com suceso');
+            return redirect()->route('app.home')->with('success', 'Empresa cadastrada com sucesso, aproveite o sistema 😁');
         } catch (CreateEmpresaException $e) {
             return $e->render();
         } catch (CreateUsuarioEmpresaException $e) {
