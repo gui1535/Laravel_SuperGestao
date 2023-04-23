@@ -2,12 +2,20 @@
 
 namespace App\Http\Controllers;
 
+use App\Exceptions\ErrorUnexpectedException;
+use App\Exceptions\PedidoDeleteException;
+use App\Exceptions\PedidoNotFoundException;
 use Illuminate\Http\Request;
 use App\Models\Pedido;
 use App\Models\Cliente;
+use App\Models\Produto;
+use Exception;
+use Illuminate\Support\Facades\Crypt;
 
 class PedidoController extends Controller
 {
+
+    private Pedido $pedido;
     /**
      * Display a listing of the resource.
      *
@@ -16,7 +24,7 @@ class PedidoController extends Controller
     public function index(Request $request)
     {
         $pedidos = Pedido::paginate(10);
-        return view('app.pedido.index', ['pedidos' => $pedidos, 'request' => $request->all()] );
+        return view('app.pedido.index', ['pedidos' => $pedidos, 'request' => $request->all()]);
     }
 
     /**
@@ -27,7 +35,8 @@ class PedidoController extends Controller
     public function create()
     {
         $clientes = Cliente::all();
-        return view('app.pedido.create', ['clientes' => $clientes]);
+        $produtos = Produto::all();
+        return view('app.pedido.create', ['clientes' => $clientes, 'produtos' => $produtos]);
     }
 
     /**
@@ -97,6 +106,40 @@ class PedidoController extends Controller
      */
     public function destroy($id)
     {
-        //
+        try {
+            $id = Crypt::decrypt($id);
+
+            $this->getPedido($id);
+
+            $this->deletarPedido();
+
+            return redirect()->back()->with('success', 'Pedido deletado com sucesso!');
+        } catch (PedidoDeleteException $e) {
+            return $e->render();
+        } catch (PedidoNotFoundException $e) {
+            return $e->render();
+        } catch (Exception $th) {
+            return ErrorUnexpectedException::render();
+        }
+    }
+
+
+    private function deletarPedido()
+    {
+        try {
+            $this->pedido->delete();
+        } catch (\Throwable $th) {
+            throw new PedidoDeleteException();
+        }
+    }
+
+    private function getPedido($id)
+    {
+        $pedido = Pedido::find($id);
+        if ($pedido) {
+            $this->pedido = $pedido;
+        } else {
+            throw new PedidoNotFoundException();
+        }
     }
 }
