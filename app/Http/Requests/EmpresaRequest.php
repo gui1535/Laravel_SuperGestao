@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use Illuminate\Validation\Rule;
 use App\Rules\CnpjUniqueRule;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Auth;
@@ -27,8 +28,8 @@ class EmpresaRequest extends FormRequest
     {
         return [
             'nome'  => 'required|min:3|max:60',
-            'email' => 'required|email',
-            'cnpj'  => ['required','cnpj', new CnpjUniqueRule],
+            'email' => ['required', 'email', Rule::unique('users', 'email')],
+            'cnpj'  => ['required', 'cnpj', new CnpjUniqueRule],
             'senha'  => 'required',
         ];
     }
@@ -40,6 +41,7 @@ class EmpresaRequest extends FormRequest
             'nome.min'    => 'O campo nome deve ter no mínimo 3 caracteres',
             'nome.max'    => 'O campo nome deve ter no máximo 40 caracteres',
             'email.email' => 'Insira um email válido',
+            'email.unique' => 'O email informado já possui cadastro no sistema',
             'cnpj.cnpj'   => 'Insira um CNPJ válido',
             'cnpj.unique' => 'O CNPJ informado já possui cadastro no sistema',
         ];
