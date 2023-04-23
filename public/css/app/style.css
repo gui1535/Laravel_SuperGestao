@@ -45,7 +45,10 @@ File: scss
     -o-transform: rotate(45deg);
     -moz-transform: rotate(45deg);
 }
-
+.required::after {
+    content: " *" !important;
+    color: red !important;
+}
 /*******************************/
 /*******************************/
 /**
