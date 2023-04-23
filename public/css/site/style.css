@@ -116,3 +116,15 @@ span {
 .color-social-icon {
     color: #1b3956;
 }
+
+@media (max-width: 992px) {
+    .w-30 {
+        width: 80% !important;
+    }
+}
+
+@media (max-width: 500px) {
+    .w-30 {
+        width: 80% !important;
+    }
+}
