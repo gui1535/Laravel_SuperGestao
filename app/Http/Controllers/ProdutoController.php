@@ -97,7 +97,7 @@ class ProdutoController extends Controller
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Item  $produto
+     * @param  \App\Models\Item  $produto
      * @return \Illuminate\Http\Response
      */
     public function update(Request $request, Item $produto)
