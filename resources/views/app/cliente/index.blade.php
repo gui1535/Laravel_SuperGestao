@@ -109,7 +109,7 @@
                                 <span>
                                     Exibindo {{ $clientes->count() }} clientes de {{ $clientes->total() }}
                                     @if (count($clientes) != 0)
-                                        (de{{ $clientes->firstItem() }} a {{ $clientes->lastItem() }})
+                                        (de {{ $clientes->firstItem() }} a {{ $clientes->lastItem() }})
                                     @endif
                                 </span>
 
