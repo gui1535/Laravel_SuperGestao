@@ -1,7 +1,7 @@
 <header class="topbar" data-navbarbg="skin6">
     <nav class="navbar top-navbar navbar-expand-md navbar-light">
         <div class="navbar-header" data-logobg="skin6">
-            <a class="navbar-brand" href="index.html">
+            <a class="navbar-brand" href="{{ route('app.home') }}">
                 <b class="logo-icon">
                     <img src="{{ asset('img/logo.png') }}" alt="homepage" class="dark-logo" />
                     <!-- Light Logo icon -->
@@ -20,7 +20,7 @@
         <div class="navbar-collapse collapse" id="navbarSupportedContent" data-navbarbg="skin5">
 
             <ul class="navbar-nav float-start me-auto">
-                Sistema Super Gestão
+                {{ auth()->user()->empresa->nome }}
             </ul>
 
             <ul class="navbar-nav float-end">

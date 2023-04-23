@@ -12,11 +12,6 @@ use Illuminate\Support\Facades\Route;
 | contains the "web" middleware group. Now create something great!
 |
 */
-/*
-Route::get('/', function () {
-    return 'Olá, seja vem vindo ao curso!';
-});
-*/
 
 Route::get('/', 'PrincipalController@principal')->name('site.index')->middleware('log.acesso');
 
@@ -24,8 +19,11 @@ Route::get('/sobre-nos', 'SobreNosController@sobreNos')->name('site.sobrenos');
     
 Route::post('/contato', 'ContatoController@salvar')->name('site.contato');
 
-Route::get('/login/{erro?}', 'LoginController@index')->name('site.login');
+Route::get('/login', 'LoginController@index')->name('site.login');
 Route::post('/login', 'LoginController@autenticar')->name('site.login');
+
+Route::get('/cadastrar-se', 'LoginController@index')->name('site.cadastrar');
+Route::post('/cadastrar-se', 'LoginController@cadastrar')->name('site.cadastrar');
 
 Route::middleware('autenticacao')->prefix('/app')->group(function() {
     Route::get('/home', 'HomeController@index')->name('app.home');

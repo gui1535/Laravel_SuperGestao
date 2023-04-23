@@ -36,6 +36,12 @@
                             <label for="password">Senha</label>
                             <input name="password" id="password" type="password" placeholder="Senha" class="form-control">
                         </div>
+                        <p>
+                            Não possui cadastro?
+                            <a href="" class="text-decoration-none">
+                                Cadastre-se
+                            </a>
+                        </p>
                         <br>
                         <button type="submit" class="btn btn-success w-100">Acessar</button>
                     </form>
