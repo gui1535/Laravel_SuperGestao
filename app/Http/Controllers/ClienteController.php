@@ -68,6 +68,7 @@ class ClienteController extends Controller
             $this->cliente->nome = $this->request->input('nome');
             $this->cliente->email = $this->request->input('email');
             $this->cliente->observacoes = $this->request->input('observacoes');
+            $this->cliente->empresa_id = auth()->user()->id;
             $this->cliente->save();
         } catch (\Throwable $th) {
             throw new CreateClienteException();
