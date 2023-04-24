@@ -25,7 +25,7 @@
             </div>
             <div class="col-3">
                 <div class="d-flex justify-content-end">
-                    <a href="{{ route('app.fornecedor.adicionar') }}">
+                    <a href="{{ route('fornecedor.create') }}">
                         <button class="btn btn-primary">
                             Novo
                         </button>
@@ -82,14 +82,14 @@
                                         <td >{{ $fornecedor->site }}</td>
                                         <td class="text-center d-flex justify-content-center">
 
-                                            <a href="{{ route('app.fornecedor.editar', ['pedido' => Crypt::encrypt($fornecedor->id)]) }}">
+                                            <a href="{{ route('fornecedor.edit', ['fornecedor' => Crypt::encrypt($fornecedor->id)]) }}">
                                                 <button class="btn">
                                                     <i class="mdi mdi-lead-pencil fs-4"></i>
                                                 </button>
                                             </a>
 
                                             <form method="POST"
-                                                action="{{ route('app.fornecedor.excluir', ['pedido' => Crypt::encrypt($fornecedor->id)]) }}">
+                                                action="{{ route('fornecedor.destroy', ['fornecedor' => Crypt::encrypt($fornecedor->id)]) }}">
                                                 @method('DELETE')
                                                 @csrf
                                                 <button type="button" data-nome="{{ $fornecedor->nome }}"
@@ -114,7 +114,7 @@
                                 <span>
                                     Exibindo {{ $fornecedores->count() }} fornecedores de {{ $fornecedores->total() }}
                                     @if (count($fornecedores) != 0)
-                                        (de{{ $fornecedores->firstItem() }} a {{ $fornecedores->lastItem() }})
+                                        (de {{ $fornecedores->firstItem() }} a {{ $fornecedores->lastItem() }})
                                     @endif
                                 </span>
 

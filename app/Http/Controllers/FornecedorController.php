@@ -2,28 +2,75 @@
 
 namespace App\Http\Controllers;
 
+use App\Exceptions\CreateFornecedorException;
+use App\Exceptions\ErrorUnexpectedException;
+use App\Http\Requests\FornecedorRequest;
 use Illuminate\Http\Request;
 use App\Models\Fornecedor;
+use Exception;
 
 class FornecedorController extends Controller
 {
-    public function index()
+
+    private Request $request;
+    private Fornecedor $fornecedor;
+    /**
+     * Display a listing of the resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function index(Request $request)
     {
         $fornecedores = Fornecedor::paginate(10);
-        
-        return view('app.fornecedor.index', ['fornecedores' => $fornecedores]);
+
+        return view('app.fornecedor.index', ['fornecedores' => $fornecedores, 'request' => $request->all()]);
     }
 
-    public function listar(Request $request)
+    /**
+     * Store a newly created resource in storage.
+     *
+     * @param  \Illuminate\Http\FornecedorRequest  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function store(FornecedorRequest $request)
     {
+        try {
+            $this->request = $request;
 
-        $fornecedores = Fornecedor::with(['produtos'])->where('nome', 'like', '%' . $request->input('nome') . '%')
-            ->where('site', 'like', '%' . $request->input('site') . '%')
-            ->where('uf', 'like', '%' . $request->input('uf') . '%')
-            ->where('email', 'like', '%' . $request->input('email') . '%')
-            ->paginate(5);
+            $this->criaFornecedor();
 
-        return view('app.fornecedor.listar', ['fornecedores' => $fornecedores, 'request' => $request->all()]);
+            return redirect()->route('fornecedor.index')->with('success', 'Fornecedor cadastrado com sucesso!');
+        } catch (CreateFornecedorException $e) {
+            return $e->render();
+        } catch (Exception $e) {
+            return ErrorUnexpectedException::render();
+        }
+    }
+
+
+    private function criaFornecedor()
+    {
+        try {
+            $this->fornecedor = new Fornecedor();
+            $this->fornecedor->nome  = $this->request->input('nome');
+            $this->fornecedor->email = $this->request->input('email');
+            $this->fornecedor->uf    = $this->request->input('uf');
+            $this->fornecedor->site  = $this->request->input('site');
+            $this->fornecedor->empresa_id  = auth()->user()->empresa->id;
+            $this->fornecedor->save();
+        } catch (\Throwable $th) {
+            throw new CreateFornecedorException();
+        }
+    }
+
+    /**
+     * Show the form for creating a new resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function create()
+    {
+        return view('app.fornecedor.create');
     }
 
     public function adicionar(Request $request)
@@ -78,12 +125,12 @@ class FornecedorController extends Controller
         return view('app.fornecedor.adicionar', ['msg' => $msg]);
     }
 
-    public function editar($id, $msg = '')
+    public function editar($id)
     {
 
         $fornecedor = Fornecedor::find($id);
 
-        return view('app.fornecedor.adicionar', ['fornecedor' => $fornecedor, 'msg' => $msg]);
+        return view('app.fornecedor.adicionar', ['fornecedor' => $fornecedor]);
     }
 
     public function excluir($id)

@@ -1,8 +1,9 @@
 @extends('app.layouts.basico')
 
-@section('titulo', 'Produto')
+@section('titulo', 'Fornecedor')
 
 @section('conteudo')
+
     <div class="conteudo-pagina">
 
         <div class="page-breadcrumb">
@@ -19,17 +20,17 @@
                                     </a>
                                 </li>
                                 <li class="breadcrumb-item">
-                                    <a href="{{ route('produto.index') }}" class="link">
-                                        Produto
+                                    <a href="{{ route('fornecedor.index') }}" class="link">
+                                        Fornecedor
                                     </a>
                                 </li>
                                 <li class="breadcrumb-item active" aria-current="page">
-                                    {{ isset($produto) ? 'Editar' : 'Novo' }}
+                                    {{ isset($fornecedor) ? 'Editar' : 'Novo' }}
                                 </li>
                             </ol>
                         </nav>
                         <h1 class="mb-0 fw-bold">
-                            {{ isset($produto) ? 'Editar Produto' : 'Novo Produto' }}
+                            {{ isset($fornecedor) ? 'Editar Fornecedor' : 'Novo Fornecedor' }}
                         </h1>
                     </div>
                 </div>
@@ -48,18 +49,7 @@
                         </div>
                     @endif
                 </div>
-                @if (count($fornecedores) == 0)
-                    <div class="col-12">
-                        <div class="alert alert-danger">
-                            <ul>
-                                <li>
-                                    Não há fornecedores cadastrados para criar um novo produto.
-                                    <a class="text-danger" href="{{ route('fornecedor.create') }}">Cadastrar Fornecedor</a>
-                                </li>
-                            </ul>
-                        </div>
-                    </div>
-                @endif
+
                 <div class="row">
                     <div class="col-12">
                         @if (session('success'))
@@ -72,8 +62,7 @@
 
                 <div class="col-12">
 
-                    @component('app.produto._components.form_create_edit', ['unidades' => $unidades, 'fornecedores' => $fornecedores])
-                    @endcomponent
+                    @include('app.fornecedor._components.form_create_edit')
                 </div>
             </div>
         </div>
@@ -81,7 +70,3 @@
     </div>
 
 @endsection
-
-@push('scripts')
-    <script src="{{ asset('js/app/pages/produto/produto.js') }}"></script>
-@endpush

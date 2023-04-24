@@ -16,7 +16,7 @@
             'icon' => 'mdi mdi-clipboard-text',
         ],
         [
-            'route' => route('app.fornecedor'),
+            'route' => route('fornecedor.index'),
             'name' => 'Fornecedor',
             'icon' => 'mdi mdi-home-modern',
         ],
