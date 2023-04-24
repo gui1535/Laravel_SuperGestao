@@ -7,27 +7,32 @@ use App\Models\Fornecedor;
 
 class FornecedorController extends Controller
 {
-    public function index() {
-        return view('app.fornecedor.index');
+    public function index()
+    {
+        $fornecedores = Fornecedor::paginate(10);
+        
+        return view('app.fornecedor.index', ['fornecedores' => $fornecedores]);
     }
 
-    public function listar(Request $request) {
+    public function listar(Request $request)
+    {
 
-        $fornecedores = Fornecedor::with(['produtos'])->where('nome', 'like', '%'.$request->input('nome').'%')
-            ->where('site', 'like', '%'.$request->input('site').'%')
-            ->where('uf', 'like', '%'.$request->input('uf').'%')
-            ->where('email', 'like', '%'.$request->input('email').'%')
+        $fornecedores = Fornecedor::with(['produtos'])->where('nome', 'like', '%' . $request->input('nome') . '%')
+            ->where('site', 'like', '%' . $request->input('site') . '%')
+            ->where('uf', 'like', '%' . $request->input('uf') . '%')
+            ->where('email', 'like', '%' . $request->input('email') . '%')
             ->paginate(5);
 
-        return view('app.fornecedor.listar', ['fornecedores' => $fornecedores, 'request' => $request->all() ]);
+        return view('app.fornecedor.listar', ['fornecedores' => $fornecedores, 'request' => $request->all()]);
     }
 
-    public function adicionar(Request $request) {
+    public function adicionar(Request $request)
+    {
 
         $msg = '';
-        
+
         //inclusão
-        if($request->input('_token') != '' && $request->input('id') == '') {
+        if ($request->input('_token') != '' && $request->input('id') == '') {
             //validacao
             $regras = [
                 'nome' => 'required|min:3|max:40',
@@ -57,11 +62,11 @@ class FornecedorController extends Controller
         }
 
         //edição
-        if($request->input('_token') != '' && $request->input('id') != '') {
+        if ($request->input('_token') != '' && $request->input('id') != '') {
             $fornecedor = Fornecedor::find($request->input('id'));
             $update = $fornecedor->update($request->all());
 
-            if($update) {
+            if ($update) {
                 $msg = 'Atualização realizada com sucesso';
             } else {
                 $msg = 'Erro ao tentar atualizar o registro';
@@ -73,14 +78,16 @@ class FornecedorController extends Controller
         return view('app.fornecedor.adicionar', ['msg' => $msg]);
     }
 
-    public function editar($id, $msg = '') {
-        
+    public function editar($id, $msg = '')
+    {
+
         $fornecedor = Fornecedor::find($id);
 
         return view('app.fornecedor.adicionar', ['fornecedor' => $fornecedor, 'msg' => $msg]);
     }
 
-    public function excluir($id) {
+    public function excluir($id)
+    {
         Fornecedor::find($id)->delete();
         //Fornecedor::find($id)->forceDelete();
 

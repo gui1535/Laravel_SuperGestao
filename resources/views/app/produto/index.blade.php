@@ -3,97 +3,144 @@
 @section('titulo', 'Produto')
 
 @section('conteudo')
-    
-    <div class="conteudo-pagina">
 
-        <div class="titulo-pagina-2">
-            <p>Listagem de Produtos</p>
-        </div>
+    <div class="page-breadcrumb">
+        <div class="row align-items-center">
+            <div class="col-9">
 
-        <div class="menu">
-            <ul>
-                <li><a href="{{ route('produto.create') }}">Novo</a></li>
-                <li><a href="">Consulta</a></li>
-            </ul>
-        </div>
-
-        <div class="informacao-pagina">
-            <div style="width: 90%; margin-left: auto; margin-right: auto;">
-                <table border="1" width="100%">
-                    <thead>
-                        <tr>
-                            <th>Nome</th>
-                            <th>Descrição</th>
-                            <th>Nome do Fornecedor</th>
-                            <th>Site do Fornecedor</th>
-                            <th>Peso</th>
-                            <th>Unidade ID</th>
-                            <th>Comprimento</th>
-                            <th>Altura</th>
-                            <th>Largura</th>
-                            <th></th>
-                            <th></th>
-                            <th></th>
-                        </tr>
-                    </head>
-
-                    <tbody>
-                        @foreach($produtos as $produto)
-                            <tr>
-                                <td>{{ $produto->nome }}</td>
-                                <td>{{ $produto->descricao }}</td>
-                                <td>{{ $produto->fornecedor->nome }}</td>
-                                <td>{{ $produto->fornecedor->site }}</td>
-                                <td>{{ $produto->peso }}</td>
-                                <td>{{ $produto->unidade_id }}</td>
-                                <td>{{ $produto->itemDetalhe->comprimento ?? '' }}</td>
-                                <td>{{ $produto->itemDetalhe->altura ?? '' }}</td>
-                                <td>{{ $produto->itemDetalhe->largura ?? '' }}</td>
-                                <td><a href="{{ route('produto.show', ['produto' => $produto->id ]) }}">Visualizar</a></td>
-                                <td>
-                                    <form id="form_{{$produto->id}}" method="post" action="{{ route('produto.destroy', ['produto' => $produto->id]) }}">
-                                        @method('DELETE')
-                                        @csrf
-                                        <!--<button type="submit">Excluir</button>-->
-                                        <a href="#" onclick="document.getElementById('form_{{$produto->id}}').submit()">Excluir</a>
-                                    </form>
-                                </td>
-                                <td><a href="{{ route('produto.edit', ['produto' => $produto->id ]) }}">Editar</a></td>
-                            </tr>
-
-                            <tr>
-                                <td colspan="12">
-                                    <p>Pedidos</p>
-                                    @foreach($produto->pedidos as $pedido)
-                                        <a href="{{ route('pedido-produto.create', ['pedido' => $pedido->id]) }}">
-                                            Pedido: {{ $pedido->id }},
-                                        </a>
-                                    @endforeach
-                                </td>
-                            </tr>
-                        @endforeach
-                    </tbody>
-                </table>
-                
-                {{ $produtos->appends($request)->links() }}
-
-                <!--
-                <br>
-                {{ $produtos->count() }} - Total de registros por página
-                <br>
-                {{ $produtos->total() }} - Total de registros da consulta
-                <br>
-                {{ $produtos->firstItem() }} - Número do primeiro registro da página
-                <br>
-                {{ $produtos->lastItem() }} - Número do último registro da página
-
-                -->
-                <br>
-                Exibindo {{ $produtos->count() }} produtos de {{ $produtos->total() }} (de {{ $produtos->firstItem() }} a {{ $produtos->lastItem() }})
+                <div>
+                    <nav aria-label="breadcrumb">
+                        <ol class="breadcrumb mb-0 d-flex
+                    align-items-center">
+                            <li class="breadcrumb-item">
+                                <a href="{{ route('app.home') }}" class="link">
+                                    <i class="mdi mdi-home-outline fs-4"></i>
+                                </a>
+                            </li>
+                            <li class="breadcrumb-item active" aria-current="page">Produto</li>
+                        </ol>
+                    </nav>
+                    <h1 class="mb-0 fw-bold">Produto</h1>
+                </div>
+            </div>
+            <div class="col-3">
+                <div class="d-flex justify-content-end">
+                    <a href="{{ route('produto.create') }}">
+                        <button class="btn btn-primary">
+                            Novo
+                        </button>
+                    </a>
+                </div>
             </div>
         </div>
-
     </div>
 
-@endsection
 
+
+
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-12">
+                @if (session('success'))
+                    <div class="alert alert-success">
+                        {{ session('success') }}
+                    </div>
+                @endif
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-12">
+                @if ($errors->any())
+                    <div class="alert alert-danger">
+                        <ul>
+                            @foreach ($errors->all() as $error)
+                                <li>{{ $error }}</li>
+                            @endforeach
+                        </ul>
+                    </div>
+                @endif
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="table-responsive">
+                        <table class="table table-c">
+                            <thead>
+                                <tr>
+                                    <th scope="col">Nome</th>
+                                    <th scope="col">Descrição</th>
+                                    <th scope="col">Nome do Fornecedor</th>
+                                    <th scope="col">Site do Fornecedor</th>
+                                    <th scope="col">Peso</th>
+                                    <th scope="col">Unidade</th>
+                                    <th scope="col">Comprimento</th>
+                                    <th scope="col">Altura</th>
+                                    <th scope="col">Largura</th>
+                                    <th class="text-center">Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @forelse ($produtos as $produto)
+                                    <tr>
+                                        <td>{{ $produto->nome }}</td>
+                                        <td>{{ $produto->descricao }}</td>
+                                        <td>{{ $produto->fornecedor->nome }}</td>
+                                        <td>{{ $produto->fornecedor->site }}</td>
+                                        <td>{{ $produto->peso }}</td>
+                                        <td>{{ $produto->unidade_id }}</td>
+                                        <td>{{ $produto->itemDetalhe->comprimento ?? '' }}</td>
+                                        <td>{{ $produto->itemDetalhe->altura ?? '' }}</td>
+                                        <td>{{ $produto->itemDetalhe->largura ?? '' }}</td>
+                                        <td class="text-center d-flex justify-content-center">
+
+                                            <a
+                                                href="{{ route('produto.edit', ['produto' => Crypt::encrypt($produto->id)]) }}">
+                                                <button class="btn">
+                                                    <i class="mdi mdi-lead-pencil fs-4"></i>
+                                                </button>
+                                            </a>
+
+                                            <form method="POST"
+                                                action="{{ route('produto.destroy', ['produto' => Crypt::encrypt($produto->id)]) }}">
+                                                @method('DELETE')
+                                                @csrf
+                                                <button type="button" data-nome="{{ $produto->nome }}"
+                                                    class="btn btn-delete-produto">
+                                                    <i class="mdi mdi-delete-circle fs-4"></i>
+                                                </button>
+                                            </form>
+
+                                        </td>
+                                    </tr>
+                                @empty
+                                    <tr>
+                                        <td colspan="999" class="text-center text-danger">
+                                            Não há produtos cadastrados
+                                        </td>
+                                    </tr>
+                                @endforelse
+                            </tbody>
+                        </table>
+                        <div class="w-100 d-flex justify-content-between">
+                            <div class="">
+                                <span>
+                                    Exibindo {{ $produtos->count() }} pedidos de {{ $produtos->total() }}
+                                    @if (count($produtos) != 0)
+                                        (de{{ $produtos->firstItem() }} a {{ $produtos->lastItem() }})
+                                    @endif
+                                </span>
+
+                            </div>
+                            <div>
+                                <span>
+                                    {{ $produtos->links('pagination::bootstrap-4') }}
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+@endsection

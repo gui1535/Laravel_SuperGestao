@@ -48,7 +48,8 @@
         integrity="sha512-oVbWSv2O4y1UzvExJMHaHcaib4wsBMS5tEP3/YkMP6GmkwRJAa79Jwsv+Y/w7w2Vb/98/Xhvck10LyJweB8Jsw=="
         crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
-    @stack('scripts')
+        <script src="{{ asset('plugins/jquery-mask/jquery.mask.min.js') }}"></script>
+        @stack('scripts')
 </body>
 
 </html>

@@ -17,11 +17,11 @@ class CreateProdutosTable extends Migration
             $table->id();
             $table->string('nome', 100);
             $table->text('descricao')->nullable();
-            $table->integer('peso')->nullable();
+            $table->decimal('peso', 10, 2)->nullable();
             $table->unsignedBigInteger('fornecedor_id');
             $table->foreign('fornecedor_id')->references('id')->on('fornecedores');
             $table->timestamps();
-            
+
             $table->unsignedBigInteger('empresa_id');
             $table->foreign('empresa_id')->references('id')->on('empresas');
         });

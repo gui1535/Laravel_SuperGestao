@@ -1,38 +1,87 @@
-@if(isset($produto->id))
-    <form method="post" action="{{ route('produto.update', ['produto' => $produto->id]) }}">
-        @csrf
-        @method('PUT')
+@push('styles')
+    <style>
+        .required::after {
+            content: " *" !important;
+            color: red !important;
+        }
+    </style>
+@endpush
+@if (count($fornecedores) != 0)
+    @if (isset($produto->id))
+        <form method="post" action="{{ route('produto.update', ['produto' => $produto->id]) }}" class="row">
+            @csrf
+            @method('PUT')
+        @else
+            <form method="post" action="{{ route('produto.store') }}" class="row">
+                @csrf
+    @endif
 @else
-    <form method="post" action="{{ route('produto.store') }}">
-        @csrf
+    <div class="row">
+@endif
+<div class="col-md-6 mb-3">
+    <label class="required" for="nome">Nome</label>
+    <input type="text" maxlength="50" required name="nome" value="{{ $produto->nome ?? old('nome') }}"
+        id="nome" placeholder="Nome" class="form-control">
+</div>
+
+<div class="col-md-6 mb-3">
+    <label class="required" for="fornecedor">Fornecedor</label>
+    <select required name="fornecedor" id="fornecedor" class="form-select">
+        <option value=""></option>
+        @foreach ($fornecedores as $fornecedor)
+            <option value="{{ $fornecedor->id }}"
+                {{ ($produto->fornecedor_id ?? old('fornecedor')) == $fornecedor->id ? 'selected' : '' }}>
+                {{ $fornecedor->nome }}</option>
+        @endforeach
+    </select>
+</div>
+
+<div class="col-md-6 mb-3">
+    <label class="required" for="unidade">Medida</label>
+    <select required name="unidade" id="unidade" class="form-select">
+        <option value=""></option>
+        @foreach ($unidades as $unidade)
+            <option value="{{ $unidade->id }}"
+                {{ ($produto->unidade_id ?? old('unidade')) == $unidade->id ? 'selected' : '' }}>
+                {{ $unidade->descricao }}</option>
+        @endforeach
+    </select>
+</div>
+
+<div class="col-md-6 mb-3">
+    <label for="peso">Peso</label>
+    <input type="text" name="peso" value="{{ $produto->peso ?? old('peso') }}" id="peso" placeholder="Peso"
+        class="form-control">
+</div>
+
+<div class="col-md-12 mb-3">
+    <label for="descricao">Descrição</label>
+    <input type="text" maxlength="255" name="descricao" value="{{ $produto->descricao ?? old('descricao') }}"
+        id="descricao" placeholder="Descrição" class="form-control">
+</div>
+@if (count($fornecedores) != 0)
+
+    <div class="form-group">
+        <div class="col-sm-12 d-flex justify-content-end">
+            <button class="btn btn-primary text-white">
+                @if (isset($produto->id))
+                    Atualizar
+                @else
+                    Cadastrar
+                @endif
+            </button>
+        </div>
+    </div>
+    <form>
+    @else
+        </div>
 @endif
 
-    <select name="fornecedor_id">
-        <option>-- Selecione um Fornecedor --</option>
-
-        @foreach($fornecedores as $fornecedor)
-            <option value="{{ $fornecedor->id }}" {{ ($produto->fornecedor_id ?? old('fornecedor_id')) == $fornecedor->id ? 'selected' : '' }} >{{ $fornecedor->nome }}</option>
-        @endforeach
-    </select>
-    {{ $errors->has('fornecedor_id') ? $errors->first('fornecedor_id') : '' }}
-
-    <input type="text" name="nome" value="{{ $produto->nome ?? old('nome') }}" placeholder="Nome" class="borda-preta">
-    {{ $errors->has('nome') ? $errors->first('nome') : '' }}
-
-    <input type="text" name="descricao" value="{{ $produto->descricao ?? old('descricao') }}" placeholder="Descrição" class="borda-preta">
-    {{ $errors->has('descricao') ? $errors->first('descricao') : '' }}
-
-    <input type="text" name="peso" value="{{ $produto->peso ?? old('peso') }}"  placeholder="peso" class="borda-preta">
-    {{ $errors->has('peso') ? $errors->first('peso') : '' }}
-
-    <select name="unidade_id">
-        <option>-- Selecione a Unidade de Medida --</option>
-
-        @foreach($unidades as $unidade)
-            <option value="{{ $unidade->id }}" {{ ($produto->unidade_id ?? old('unidade_id')) == $unidade->id ? 'selected' : '' }} >{{ $unidade->descricao }}</option>
-        @endforeach
-    </select>
-    {{ $errors->has('unidade_id') ? $errors->first('unidade_id') : '' }}
-    
-    <button type="submit" class="borda-preta">Cadastrar</button>
-<form>
+@push('scripts')
+    <script>
+        $(document).ready(function() {
+            $('#fornecedor').select2();
+            $('#unidade').select2();
+        });
+    </script>
+@endpush
