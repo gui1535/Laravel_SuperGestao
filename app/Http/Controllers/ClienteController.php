@@ -177,6 +177,8 @@ class ClienteController extends Controller
             return redirect()->back()->with('success', 'Cliente deletado com sucesso!');
         } catch (ClienteDeleteException $e) {
             return $e->render();
+        } catch (ClienteNotFoundException $e) {
+            return $e->render();
         } catch (Exception $th) {
             return ErrorUnexpectedException::render();
         }

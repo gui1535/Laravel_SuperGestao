@@ -115,7 +115,7 @@
                                 <span>
                                     Exibindo {{ $pedidos->count() }} pedidos de {{ $pedidos->total() }}
                                     @if (count($pedidos) != 0)
-                                        (de{{ $pedidos->firstItem() }} a {{ $pedidos->lastItem() }})
+                                        (de {{ $pedidos->firstItem() }} a {{ $pedidos->lastItem() }})
                                     @endif
                                 </span>
 

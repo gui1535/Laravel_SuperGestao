@@ -4,10 +4,14 @@ namespace App\Http\Controllers;
 
 use App\Exceptions\CreateFornecedorException;
 use App\Exceptions\ErrorUnexpectedException;
+use App\Exceptions\FornecedorDeleteException;
+use App\Exceptions\FornecedorNotFoundException;
+use App\Exceptions\FornecedorUpdateException;
 use App\Http\Requests\FornecedorRequest;
 use Illuminate\Http\Request;
 use App\Models\Fornecedor;
 use Exception;
+use Illuminate\Support\Facades\Crypt;
 
 class FornecedorController extends Controller
 {
@@ -73,71 +77,112 @@ class FornecedorController extends Controller
         return view('app.fornecedor.create');
     }
 
-    public function adicionar(Request $request)
+    /**
+     * Show the form for editing the specified resource.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function edit($id)
     {
+        try {
+            $id = Crypt::decrypt($id);
 
-        $msg = '';
+            $this->getFornecedor($id);
 
-        //inclusão
-        if ($request->input('_token') != '' && $request->input('id') == '') {
-            //validacao
-            $regras = [
-                'nome' => 'required|min:3|max:40',
-                'site' => 'required',
-                'uf' => 'required|min:2|max:2',
-                'email' => 'email'
-            ];
+            $fornecedor = $this->fornecedor;
 
-            $feedback = [
-                'required' => 'O campo :attribute deve ser preenchido',
-                'nome.min' => 'O campo nome deve ter no mínimo 3 caracteres',
-                'nome.max' => 'O campo nome deve ter no máximo 40 caracteres',
-                'uf.min' => 'O campo uf deve ter no mínimo 2 caracteres',
-                'uf.max' => 'O campo uf deve ter no máximo 2 caracteres',
-                'email.email' => 'O campo e-mail não foi preenchido corretamente'
-            ];
-
-            $request->validate($regras, $feedback);
-
-            $fornecedor = new Fornecedor();
-            $fornecedor->create($request->all());
-
-            //redirect
-
-            //dados view
-            $msg = 'Cadastro realizado com sucesso';
+            return view('app.fornecedor.create', compact('fornecedor'));
+        } catch (FornecedorNotFoundException $e) {
+            return $e->render();
+        } catch (Exception $th) {
+            return ErrorUnexpectedException::render();
         }
-
-        //edição
-        if ($request->input('_token') != '' && $request->input('id') != '') {
-            $fornecedor = Fornecedor::find($request->input('id'));
-            $update = $fornecedor->update($request->all());
-
-            if ($update) {
-                $msg = 'Atualização realizada com sucesso';
-            } else {
-                $msg = 'Erro ao tentar atualizar o registro';
-            }
-
-            return redirect()->route('app.fornecedor.editar', ['id' => $request->input('id'), 'msg' => $msg]);
-        }
-
-        return view('app.fornecedor.adicionar', ['msg' => $msg]);
     }
 
-    public function editar($id)
-    {
 
+    /**
+     * Update the specified resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function update(FornecedorRequest $request, $id)
+    {
+        try {
+            $id = Crypt::decrypt($id);
+
+            $this->request = $request;
+
+            $this->getFornecedor($id);
+
+            $this->updateFornecedor();
+
+            return redirect()->back()->with('success', 'Fornecedor atualizado com sucesso!');
+        } catch (FornecedorNotFoundException $e) {
+            return $e->render();
+        } catch (FornecedorUpdateException $e) {
+            return $e->render();
+        } catch (Exception $th) {
+            return ErrorUnexpectedException::render();
+        }
+    }
+
+    private function updateFornecedor()
+    {
+        try {
+            $this->fornecedor->nome  = $this->request->input('nome');
+            $this->fornecedor->email = $this->request->input('email');
+            $this->fornecedor->uf    = $this->request->input('uf');
+            $this->fornecedor->site  = $this->request->input('site');
+            $this->fornecedor->save();
+        } catch (\Throwable $th) {
+            throw new FornecedorUpdateException();
+        }
+    }
+
+    /**
+     * Remove the specified resource from storage.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function destroy($id)
+    {
+        try {
+            $id = Crypt::decrypt($id);
+
+            $this->getFornecedor($id);
+
+            $this->deletarCliente();
+
+            return redirect()->back()->with('success', 'Fornecedor deletado com sucesso!');
+        } catch (FornecedorDeleteException $e) {
+            return $e->render();
+        } catch (FornecedorNotFoundException $e) {
+            return $e->render();
+        } catch (Exception $th) {
+            return ErrorUnexpectedException::render();
+        }
+    }
+
+    private function getFornecedor($id)
+    {
         $fornecedor = Fornecedor::find($id);
-
-        return view('app.fornecedor.adicionar', ['fornecedor' => $fornecedor]);
+        if ($fornecedor) {
+            $this->fornecedor = $fornecedor;
+        } else {
+            throw new FornecedorNotFoundException();
+        }
     }
 
-    public function excluir($id)
+    private function deletarCliente()
     {
-        Fornecedor::find($id)->delete();
-        //Fornecedor::find($id)->forceDelete();
-
-        return redirect()->route('app.fornecedor');
+        try {
+            $this->fornecedor->delete();
+        } catch (\Throwable $th) {
+            throw new FornecedorDeleteException();
+        }
     }
 }

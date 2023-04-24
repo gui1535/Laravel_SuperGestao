@@ -131,3 +131,7 @@
         </div>
     </div>
 @endsection
+
+@push('scripts')
+    <script src="{{ asset('js/app/pages/fornecedor/fornecedor.js') }}"></script>
+@endpush
