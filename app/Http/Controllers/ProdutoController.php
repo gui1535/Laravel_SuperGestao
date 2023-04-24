@@ -100,7 +100,7 @@ class ProdutoController extends Controller
         $this->produtoDetalhe->largura = $this->request->input('largura');
         $this->produtoDetalhe->peso = $this->request->input('peso');
         $this->produtoDetalhe->altura = $this->request->input('altura');
-        $this->produtoDetalhe->preco_venda = $preco ? number_format($preco, 2, '.', '') : '';
+        $this->produtoDetalhe->preco_venda = $preco ? number_format($preco, 2, '.', '') :null;
         $this->produtoDetalhe->estoque_minimo = $this->request->input('estoque_minimo');
         $this->produtoDetalhe->unidade_id = $this->request->input('unidade');
         $this->produtoDetalhe->save();
