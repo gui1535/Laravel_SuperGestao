@@ -36,7 +36,7 @@
     </select>
 </div>
 
-<div class="col-md-6 mb-3">
+<div class="col-md-3 mb-3">
     <label class="required" for="unidade">Medida</label>
     <select required name="unidade" id="unidade" class="form-select">
         <option value=""></option>
@@ -48,10 +48,48 @@
     </select>
 </div>
 
-<div class="col-md-6 mb-3">
-    <label for="peso">Peso</label>
-    <input type="text" name="peso" value="{{ $produto->peso ?? old('peso') }}" id="peso" placeholder="Peso"
-        class="form-control">
+<div class="col-md-3 mb-3">
+    <label for="peso">Peso (Gramas)</label>
+    <input type="text" name="peso" value="{{ $produto->delalhes->peso ?? old('peso') }}" id="peso"
+        placeholder="Peso" class="form-control">
+</div>
+
+<div class="col-md-3 mb-3">
+    <label for="preco">Preço</label>
+    <input type="text" name="preco" value="{{ $produto->delalhes->preco ?? old('preco') }}" id="preco"
+        placeholder="Preço" class="form-control">
+</div>
+
+<div class="col-md-3 mb-3">
+    <label for="estoque_minimo">Estoque Mínimo</label>
+    <input type="text" name="estoque_minimo"
+        value="{{ $produto->delalhes->estoque_minimo ?? old('estoque_minimo') }}" id="estoque_minimo" placeholder="0"
+        class="form-control estoque">
+</div>
+
+<div class="col-md-3 mb-3">
+    <label for="estoque_maximo">Estoque Maximo</label>
+    <input type="text" name="estoque_maximo"
+        value="{{ $produto->delalhes->estoque_maximo ?? old('estoque_maximo') }}" id="estoque_maximo" placeholder="0"
+        class="form-control estoque">
+</div>
+
+<div class="col-md-3 mb-3">
+    <label for="comprimento">Comprimento (Centimetros)</label>
+    <input type="text" name="comprimento" value="{{ $produto->delalhes->comprimento ?? old('comprimento') }}"
+        id="comprimento" placeholder="Comprimento" class="form-control centimetros">
+</div>
+
+<div class="col-md-3 mb-3">
+    <label for="altura">Altura (Centimetros)</label>
+    <input type="text" name="altura" value="{{ $produto->delalhes->altura ?? old('altura') }}" id="altura"
+        placeholder="Altura" class="form-control centimetros">
+</div>
+
+<div class="col-md-3 mb-3">
+    <label for="largura">Largura (Centimetros)</label>
+    <input type="text" name="largura" value="{{ $produto->delalhes->largura ?? old('largura') }}" id="largura"
+        placeholder="Largura" class="form-control centimetros">
 </div>
 
 <div class="col-md-12 mb-3">
@@ -78,10 +116,4 @@
 @endif
 
 @push('scripts')
-    <script>
-        $(document).ready(function() {
-            $('#fornecedor').select2();
-            $('#unidade').select2();
-        });
-    </script>
 @endpush

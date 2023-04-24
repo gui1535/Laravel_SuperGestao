@@ -70,13 +70,13 @@
                                 <tr>
                                     <th scope="col">Nome</th>
                                     <th scope="col">Descrição</th>
-                                    <th scope="col">Nome do Fornecedor</th>
-                                    <th scope="col">Site do Fornecedor</th>
-                                    <th scope="col">Peso</th>
-                                    <th scope="col">Unidade</th>
-                                    <th scope="col">Comprimento</th>
-                                    <th scope="col">Altura</th>
-                                    <th scope="col">Largura</th>
+                                    <th class="text-center" scope="col">Nome do Fornecedor</th>
+                                    <th class="text-center" scope="col">Site do Fornecedor</th>
+                                    <th class="text-center" scope="col">Peso</th>
+                                    <th class="text-center" scope="col">Unidade</th>
+                                    <th class="text-center" scope="col">Comprimento</th>
+                                    <th class="text-center" scope="col">Altura</th>
+                                    <th class="text-center" scope="col">Largura</th>
                                     <th class="text-center">Ações</th>
                                 </tr>
                             </thead>
@@ -85,13 +85,27 @@
                                     <tr>
                                         <td>{{ $produto->nome }}</td>
                                         <td>{{ $produto->descricao }}</td>
-                                        <td>{{ $produto->fornecedor->nome }}</td>
-                                        <td>{{ $produto->fornecedor->site }}</td>
-                                        <td>{{ $produto->peso }}</td>
-                                        <td>{{ $produto->unidade_id }}</td>
-                                        <td>{{ $produto->itemDetalhe->comprimento ?? '' }}</td>
-                                        <td>{{ $produto->itemDetalhe->altura ?? '' }}</td>
-                                        <td>{{ $produto->itemDetalhe->largura ?? '' }}</td>
+                                        <td class="text-center">{{ $produto->fornecedor->nome }}</td>
+                                        <td class="text-center">
+                                            <a target="_blank" href="{{ $produto->fornecedor->site }}">
+                                                {{ $produto->fornecedor->site }}
+                                            </a>
+                                        </td>
+                                        <td class="text-center">
+                                            {{ $produto->detalhes[0]->peso ?? '-' }}
+                                        </td>
+                                        <td class="text-center">
+                                            {{ $produto->detalhes[0]->unidade->descricao ?? '-' }}
+                                        </td>
+                                        <td class="text-center">
+                                            {{ $produto->detalhes[0]->comprimento ?? '-' }}
+                                        </td>
+                                        <td class="text-center">
+                                            {{ $produto->detalhes[0]->altura ?? '-' }}
+                                        </td>
+                                        <td class="text-center">
+                                            {{ $produto->detalhes[0]->largura ?? '-' }}
+                                        </td>
                                         <td class="text-center d-flex justify-content-center">
 
                                             <a
@@ -127,7 +141,7 @@
                                 <span>
                                     Exibindo {{ $produtos->count() }} pedidos de {{ $produtos->total() }}
                                     @if (count($produtos) != 0)
-                                        (de{{ $produtos->firstItem() }} a {{ $produtos->lastItem() }})
+                                        (de {{ $produtos->firstItem() }} a {{ $produtos->lastItem() }})
                                     @endif
                                 </span>
 
@@ -144,3 +158,6 @@
         </div>
     </div>
 @endsection
+@push('scripts')
+    <script src="{{ asset('js/app/pages/produto/produto.js') }}"></script>
+@endpush

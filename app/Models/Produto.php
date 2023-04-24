@@ -2,19 +2,36 @@
 
 namespace App\Models;
 
-
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Facades\Auth;
 
 class Produto extends Model
 {
+    use SoftDeletes;
     protected $fillable = ['nome', 'descricao', 'peso', 'unidade_id'];
 
-    public function produtoDetalhe() {
+    public function produtoDetalhe()
+    {
         return $this->hasOne('App\ProdutoDetalhe');
+    }
 
-        //Produto tem 1 produtoDetalhe
+    public function newQuery($excludeDeleted = true)
+    {
+        $query = parent::newQuery($excludeDeleted);
+        if (Auth::check() == true) {
+            $query->where('empresa_id', '=', auth()->user()->empresa->id);
+        }
+        return $query;
+    }
 
-        //1 registro relacionado em produto_detalhes (fk) -> produto_id
-        //produtos (pk) -> id
+    public function fornecedor()
+    {
+        return $this->belongsTo(Fornecedor::class);
+    }
+
+    public function detalhes()
+    {
+        return $this->hasMany(ProdutoDetalhe::class);
     }
 }

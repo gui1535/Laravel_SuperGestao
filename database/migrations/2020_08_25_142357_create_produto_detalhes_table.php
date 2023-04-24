@@ -17,11 +17,16 @@ class CreateProdutoDetalhesTable extends Migration
             //colunas
             $table->id();
             $table->unsignedBigInteger('produto_id');
-            $table->float('comprimento', 8, 2);
-            $table->float('largura', 8, 2);
-            $table->float('altura', 8, 2);
+            $table->decimal('comprimento', 10, 2)->nullable();
+            $table->decimal('largura', 10, 2)->nullable();
+            $table->decimal('peso', 10, 2)->nullable();
+            $table->decimal('altura', 10, 2)->nullable();
+            $table->decimal('preco_venda', 10, 2)->nullable();
+            $table->decimal('estoque_minimo', 10, 2)->nullable();
+            $table->decimal('estoque_maximo', 10, 2)->nullable();
             $table->timestamps();
-
+            $table->unsignedBigInteger('unidade_id');
+            $table->foreign('unidade_id')->references('id')->on('unidades');
             //constraint
             $table->foreign('produto_id')->references('id')->on('produtos');
             $table->unique('produto_id');

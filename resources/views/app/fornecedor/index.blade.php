@@ -76,13 +76,18 @@
                             <tbody>
                                 @forelse ($fornecedores as $fornecedor)
                                     <tr>
-                                        <td >{{ $fornecedor->nome }}</td>
-                                        <td >{{ $fornecedor->uf }}</td>
-                                        <td >{{ $fornecedor->email }}</td>
-                                        <td >{{ $fornecedor->site }}</td>
+                                        <td>{{ $fornecedor->nome }}</td>
+                                        <td>{{ $fornecedor->uf }}</td>
+                                        <td>{{ $fornecedor->email }}</td>
+                                        <td>
+                                            <a target="_blank" href="{{ $fornecedor->site }}">
+                                                {{ $fornecedor->site }}
+                                            </a>
+                                        </td>
                                         <td class="text-center d-flex justify-content-center">
 
-                                            <a href="{{ route('fornecedor.edit', ['fornecedor' => Crypt::encrypt($fornecedor->id)]) }}">
+                                            <a
+                                                href="{{ route('fornecedor.edit', ['fornecedor' => Crypt::encrypt($fornecedor->id)]) }}">
                                                 <button class="btn">
                                                     <i class="mdi mdi-lead-pencil fs-4"></i>
                                                 </button>
