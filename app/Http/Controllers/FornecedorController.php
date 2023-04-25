@@ -15,13 +15,22 @@ use Illuminate\Support\Facades\Crypt;
 
 class FornecedorController extends Controller
 {
-
-    private Request $request;
-    private Fornecedor $fornecedor;
     /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
+     * Request que será recebido
+     * @var \Illuminate\Http\Request $request
+     */
+    private Request $request;
+
+    /**
+     * Fornecedor
+     * @var \App\Models\Fornecedor $fornecedor
+     */
+    private Fornecedor $fornecedor;
+
+    /**
+     * Index da pagina de fornecedores
+     * @param \Illuminate\Http\Request $request
+     * @return \Illuminate\Contracts\View\View|\Illuminate\Contracts\View\Factory
      */
     public function index(Request $request)
     {
@@ -31,17 +40,18 @@ class FornecedorController extends Controller
     }
 
     /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\FornecedorRequest  $request
-     * @return \Illuminate\Http\Response
+     * Recebe o request para criar um fornecedor
+     * @param \App\Http\Requests\FornecedorRequest $request
+     * @return \Illuminate\Http\RedirectResponse
      */
     public function store(FornecedorRequest $request)
     {
         try {
             $this->request = $request;
 
-            $this->criaFornecedor();
+            $this->fornecedor = new Fornecedor();
+
+            $this->criaOuAtualizaFornecedor();
 
             return redirect()->route('fornecedor.index')->with('success', 'Fornecedor cadastrado com sucesso!');
         } catch (CreateFornecedorException $e) {
@@ -51,26 +61,40 @@ class FornecedorController extends Controller
         }
     }
 
-
-    private function criaFornecedor()
+    /**
+     * Cria ou atualiza um fornecedor
+     * @return void
+     */
+    private function criaOuAtualizaFornecedor($atualizar = false)
     {
         try {
-            $this->fornecedor = new Fornecedor();
-            $this->fornecedor->nome  = $this->request->input('nome');
-            $this->fornecedor->email = $this->request->input('email');
-            $this->fornecedor->uf    = $this->request->input('uf');
-            $this->fornecedor->site  = $this->request->input('site');
-            $this->fornecedor->empresa_id  = auth()->user()->empresa->id;
+            $this->preencheFornecedorPeloRequest();
             $this->fornecedor->save();
         } catch (\Throwable $th) {
-            throw new CreateFornecedorException();
+            if ($atualizar) {
+                throw new FornecedorUpdateException();
+            } else {
+                throw new CreateFornecedorException();
+            }
         }
     }
 
     /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
+     * Preenche o fornecedor pelo que foi recebido no request
+     * @return void
+     */
+    private function preencheFornecedorPeloRequest()
+    {
+        $this->fornecedor->nome  = $this->request->input('nome');
+        $this->fornecedor->email = $this->request->input('email');
+        $this->fornecedor->uf    = $this->request->input('uf');
+        $this->fornecedor->site  = $this->request->input('site');
+        $this->fornecedor->empresa_id  = auth()->user()->empresa->id;
+    }
+
+    /**
+     * Pagina para criar um fornecedor
+     * @return \Illuminate\Contracts\View\View|\Illuminate\Contracts\View\Factory
      */
     public function create()
     {
@@ -78,10 +102,9 @@ class FornecedorController extends Controller
     }
 
     /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * Pagina para editar um fornecedor recebendo um ID criptografado como parametro
+     * @param mixed $id
+     * @return \Illuminate\Contracts\View\View|\Illuminate\Contracts\View\Factory
      */
     public function edit($id)
     {
@@ -100,13 +123,11 @@ class FornecedorController extends Controller
         }
     }
 
-
     /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * Recebe o request e um ID para editar um fornecedor
+     * @param \App\Http\Requests\FornecedorRequest $request
+     * @param mixed $id
+     * @return \Illuminate\Http\RedirectResponse
      */
     public function update(FornecedorRequest $request, $id)
     {
@@ -129,24 +150,10 @@ class FornecedorController extends Controller
         }
     }
 
-    private function updateFornecedor()
-    {
-        try {
-            $this->fornecedor->nome  = $this->request->input('nome');
-            $this->fornecedor->email = $this->request->input('email');
-            $this->fornecedor->uf    = $this->request->input('uf');
-            $this->fornecedor->site  = $this->request->input('site');
-            $this->fornecedor->save();
-        } catch (\Throwable $th) {
-            throw new FornecedorUpdateException();
-        }
-    }
-
     /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * Recebe um ID para deletar um fornecedor
+     * @param mixed $id
+     * @return \Illuminate\Http\RedirectResponse
      */
     public function destroy($id)
     {
@@ -167,6 +174,11 @@ class FornecedorController extends Controller
         }
     }
 
+    /**
+     * Busca um fornecedor pelo ID
+     * @param mixed $id
+     * @return void
+     */
     private function getFornecedor($id)
     {
         $fornecedor = Fornecedor::find($id);
@@ -177,6 +189,10 @@ class FornecedorController extends Controller
         }
     }
 
+    /**
+     * Deleta um fornecedor
+     * @return void
+     */
     private function deletarCliente()
     {
         try {
