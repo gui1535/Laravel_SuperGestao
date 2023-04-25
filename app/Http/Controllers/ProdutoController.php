@@ -2,10 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\Exceptions\CreateProdutoDetalhesException;
 use App\Exceptions\CreateProdutoException;
 use App\Exceptions\ErrorUnexpectedException;
 use App\Exceptions\ProdutoDeleteException;
+use App\Exceptions\ProdutoDetalheNotFoundException;
+use App\Exceptions\ProdutoDetalhesUpdateException;
 use App\Exceptions\ProdutoNotFoundException;
+use App\Exceptions\ProdutoUpdateException;
 use App\Http\Requests\ProdutoRequest;
 use App\Models\Produto;
 use App\Models\Item;
@@ -59,54 +63,66 @@ class ProdutoController extends Controller
         try {
             $this->request = $request;
 
-            $this->criaProduto();
+            $this->produto = new Produto();
 
-            $this->criaProdutoDetalhe();
+            $this->criaOuAtualizaProduto();
+
+            $this->produtoDetalhe = new ProdutoDetalhe();
+
+            $this->criaOuAtualizaProdutoDetalhe();
 
             return redirect()->route('produto.index')->with('success', 'Produto cadastrado com sucesso!');
         } catch (CreateProdutoException $e) {
+            return $e->render();
+        } catch (CreateProdutoDetalhesException $e) {
             return $e->render();
         } catch (Exception $e) {
             return $e;
         }
     }
 
-    private function criaProduto()
+    private function criaOuAtualizaProduto($atualizar = false)
     {
         try {
-            $this->produto = new Produto();
             $this->produto->nome = $this->request->input('nome');
             $this->produto->descricao = $this->request->input('descricao');
             $this->produto->fornecedor_id = $this->request->input('fornecedor');
             $this->produto->empresa_id = auth()->user()->id;
             $this->produto->save();
         } catch (\Throwable $th) {
-            // throw new CreateProdutoException();
+            if ($atualizar) {
+                throw new ProdutoUpdateException();
+            } else {
+                throw new CreateProdutoException();
+            }
         }
     }
 
-    private function criaProdutoDetalhe()
+    private function criaOuAtualizaProdutoDetalhe($atualizar = false)
     {
-        // try {
-        $preco =  $this->request->input('preco');
-        if ($preco) {
-            $preco = str_replace(".", "", $preco);
-            $preco = str_replace(",", ".", $preco);
-            $preco = floatval($preco);
+        try {
+            $this->preencheProdutoDetalhePeloRequest();
+            $this->produtoDetalhe->save();
+        } catch (\Throwable $th) {
+            if ($atualizar) {
+                throw new ProdutoDetalhesUpdateException();
+            } else {
+                throw new CreateProdutoDetalhesException();
+            }
         }
-        $this->produtoDetalhe = new ProdutoDetalhe();
+    }
+
+    private function preencheProdutoDetalhePeloRequest()
+    {
         $this->produtoDetalhe->produto_id = $this->produto->id;
         $this->produtoDetalhe->comprimento = $this->request->input('comprimento');
         $this->produtoDetalhe->largura = $this->request->input('largura');
         $this->produtoDetalhe->peso = $this->request->input('peso');
         $this->produtoDetalhe->altura = $this->request->input('altura');
-        $this->produtoDetalhe->preco_venda = $preco ? number_format($preco, 2, '.', '') :null;
+        $this->produtoDetalhe->preco_venda = precoBrlParaDecimal($this->request->input('preco'));
         $this->produtoDetalhe->estoque_minimo = $this->request->input('estoque_minimo');
+        $this->produtoDetalhe->estoque_maximo = $this->request->input('estoque_maximo');
         $this->produtoDetalhe->unidade_id = $this->request->input('unidade');
-        $this->produtoDetalhe->save();
-        // } catch (\Throwable $th) {
-        //     // throw new CreateProdutoException();
-        // }
     }
 
     /**
@@ -126,46 +142,58 @@ class ProdutoController extends Controller
      * @param  \App\Produto  $produto
      * @return \Illuminate\Http\Response
      */
-    public function edit(Produto $produto)
+    public function edit($id)
     {
-        $unidades = Unidade::all();
-        $fornecedores = Fornecedor::all();
-        return view('app.produto.edit', ['produto' => $produto, 'unidades' => $unidades, 'fornecedores' => $fornecedores]);
+        try {
+            $id = Crypt::decrypt($id);
+
+            $this->getProduto($id);
+
+            $unidades = Unidade::all();
+
+            $fornecedores = Fornecedor::all();
+
+            return view('app.produto.create', ['unidades' => $unidades, 'fornecedores' => $fornecedores, 'produto' => $this->produto]);
+        } catch (ProdutoNotFoundException $e) {
+            return $e->render();
+        } catch (Exception $th) {
+            return ErrorUnexpectedException::render();
+        }
     }
 
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\Item  $produto
+
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request)
+    public function update(ProdutoRequest $request, $id)
     {
-        $regras = [
-            'nome' => 'required|min:3|max:40',
-            'descricao' => 'required|min:3|max:2000',
-            'peso' => 'required|integer',
-            'unidade_id' => 'exists:unidades,id',
-            'fornecedor_id' => 'exists:fornecedores,id'
-        ];
+        try {
+            $id = Crypt::decrypt($id);
 
-        $feedback = [
-            'required' => 'O campo :attribute deve ser preenchido',
-            'nome.min' => 'O campo nome deve ter no mínimo 3 caracteres',
-            'nome.max' => 'O campo nome deve ter no máximo 40 caracteres',
-            'descricao.min' => 'O campo descrição deve ter no mínimo 3 caracteres',
-            'descricao.max' => 'O campo descrição deve ter no máximo 2000 caracteres',
-            'peso.integer' => 'O campo peso deve ser um número inteiro',
-            'unidade_id.exists' => 'A unidade de medida informada não existe',
-            'fornecedor_id.exists' => 'O fornecedor informado não existe'
-        ];
+            $this->request = $request;
 
-        $request->validate($regras, $feedback);
+            $this->getProduto($id);
 
-        //dd($request->all());
-        $produto->update($request->all());
-        return redirect()->route('produto.show', ['produto' => $produto->id]);
+            $this->getProdutoDetalhe();
+
+            $this->criaOuAtualizaProduto(true);
+
+            $this->criaOuAtualizaProdutoDetalhe(true);
+
+            return redirect()->back()->with('success', 'Produto atualizado com sucesso!');
+        } catch (ProdutoNotFoundException $e) {
+            return $e->render();
+        } catch (ProdutoUpdateException $e) {
+            return $e->render();
+        } catch (ProdutoDetalhesUpdateException $e) {
+            return $e->render();
+        } catch (ProdutoDetalheNotFoundException $e) {
+            return $e->render();
+        } catch (Exception $e) {
+            return $e;
+        }
     }
 
 
@@ -210,6 +238,16 @@ class ProdutoController extends Controller
             $this->produto->delete();
         } catch (\Throwable $th) {
             throw new ProdutoDeleteException();
+        }
+    }
+
+    private function getProdutoDetalhe()
+    {
+        $produtoDetalhe = ProdutoDetalhe::where('produto_id', $this->produto->id)->first();
+        if ($produtoDetalhe) {
+            $this->produtoDetalhe = $produtoDetalhe;
+        } else {
+            throw new ProdutoDetalheNotFoundException();
         }
     }
 }
