@@ -71,7 +71,7 @@ class ClienteController extends Controller
     }
 
     /**
-     * Cria um cliente
+     * Cria ou atualiza um cliente
      * @param bool $atualizar
      * @return void
      */
