@@ -16,13 +16,22 @@ use Illuminate\Support\Facades\Crypt;
 
 class ClienteController extends Controller
 {
+    /**
+     * Request que será recebido
+     * @var \Illuminate\Http\Request $request
+     */
     private Request $request;
+
+    /**
+     * Cliente
+     * @var \App\Models\Cliente $cliente
+     */
     private Cliente $cliente;
 
     /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
+     * Index da pagina de clientes
+     * @param \Illuminate\Http\Request $request
+     * @return \Illuminate\Contracts\View\View|\Illuminate\Contracts\View\Factory
      */
     public function index(Request $request)
     {
@@ -31,9 +40,8 @@ class ClienteController extends Controller
     }
 
     /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
+     * Pagina para criar um cliente
+     * @return \Illuminate\Contracts\View\View|\Illuminate\Contracts\View\Factory
      */
     public function create()
     {
@@ -41,17 +49,18 @@ class ClienteController extends Controller
     }
 
     /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
+     * Recebe o request para criar um cliente
+     * @param \App\Http\Requests\ClienteRequest $request
+     * @return \Illuminate\Http\RedirectResponse|void
      */
     public function store(ClienteRequest $request)
     {
         try {
             $this->request = $request;
 
-            $this->criaCliente();
+            $this->cliente = new Cliente();
+
+            $this->criaOuAtualizaCliente();
 
             return redirect()->route('cliente.index')->with('success', 'Cliente cadastrado com sucesso!');
         } catch (CreateClienteException $e) {
@@ -61,36 +70,32 @@ class ClienteController extends Controller
         }
     }
 
-    private function criaCliente()
+    /**
+     * Cria um cliente
+     * @param bool $atualizar
+     * @return void
+     */
+    private function criaOuAtualizaCliente($atualizar = false)
     {
         try {
-            $this->cliente = new Cliente();
             $this->cliente->nome = $this->request->input('nome');
             $this->cliente->email = $this->request->input('email');
             $this->cliente->observacoes = $this->request->input('observacoes');
             $this->cliente->empresa_id = auth()->user()->id;
             $this->cliente->save();
         } catch (\Throwable $th) {
-            throw new CreateClienteException();
+            if ($atualizar) {
+                throw new ClienteUpdateException();
+            } else {
+                throw new CreateClienteException();
+            }
         }
     }
 
     /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function show($id)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * Pagina para editar um cliente recebendo um ID criptografado como parametro
+     * @param mixed $id
+     * @return \Illuminate\Contracts\View\View|\Illuminate\Contracts\View\Factory
      */
     public function edit($id)
     {
@@ -109,6 +114,11 @@ class ClienteController extends Controller
         }
     }
 
+    /**
+     * Busca um cliente pelo ID
+     * @param mixed $id
+     * @return void
+     */
     private function getCliente($id)
     {
         $cliente = Cliente::find($id);
@@ -120,11 +130,10 @@ class ClienteController extends Controller
     }
 
     /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * Recebe o request e um ID para editar um cliente
+     * @param \App\Http\Requests\ClienteRequest $request
+     * @param mixed $id
+     * @return \Illuminate\Http\RedirectResponse
      */
     public function update(ClienteRequest $request, $id)
     {
@@ -135,7 +144,7 @@ class ClienteController extends Controller
 
             $this->getCliente($id);
 
-            $this->updateCliente();
+            $this->criaOuAtualizaCliente(true);
 
             return redirect()->back()->with('success', 'Cliente atualizado com sucesso!');
         } catch (ClienteNotFoundException $e) {
@@ -147,23 +156,10 @@ class ClienteController extends Controller
         }
     }
 
-    private function updateCliente()
-    {
-        try {
-            $this->cliente->nome = $this->request->input('nome');
-            $this->cliente->email = $this->request->input('email');
-            $this->cliente->observacoes = $this->request->input('observacoes');
-            $this->cliente->save();
-        } catch (\Throwable $th) {
-            throw new ClienteUpdateException();
-        }
-    }
-
     /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * Recebe um ID para deletar um cliente
+     * @param mixed $id
+     * @return \Illuminate\Http\RedirectResponse
      */
     public function destroy($id)
     {
@@ -184,6 +180,10 @@ class ClienteController extends Controller
         }
     }
 
+    /**
+     * Deleta um cliente
+     * @return void
+     */
     private function deletarCliente()
     {
         try {
