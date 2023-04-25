@@ -72,8 +72,13 @@
 
                 <div class="col-12">
 
-                    @component('app.produto._components.form_create_edit', ['unidades' => $unidades, 'fornecedores' => $fornecedores])
+                    @component('app.produto._components.form_create_edit', [
+                        'unidades' => $unidades,
+                        'fornecedores' => $fornecedores,
+                        'produto' => $produto ?? '',
+                    ])
                     @endcomponent
+
                 </div>
             </div>
         </div>

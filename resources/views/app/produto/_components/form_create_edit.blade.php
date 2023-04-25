@@ -8,7 +8,7 @@
 @endpush
 @if (count($fornecedores) != 0)
     @if (isset($produto->id))
-        <form method="post" action="{{ route('produto.update', ['produto' => $produto->id]) }}" class="row">
+        <form method="post" action="{{ route('produto.update', ['produto' => Crypt::encrypt($produto->id)]) }}" class="row">
             @csrf
             @method('PUT')
         @else
@@ -37,58 +37,61 @@
 </div>
 
 <div class="col-md-3 mb-3">
-    <label class="required" for="unidade">Medida</label>
+    <label class="required" for="unidade">
+        Medida
+    </label>
     <select required name="unidade" id="unidade" class="form-select">
         <option value=""></option>
         @foreach ($unidades as $unidade)
-            <option value="{{ $unidade->id }}"
-                {{ ($produto->unidade_id ?? old('unidade')) == $unidade->id ? 'selected' : '' }}>
-                {{ $unidade->descricao }}</option>
+        <option value="{{ $unidade->id }}"
+                {{ ($produto->detalhes[0]->unidade_id ?? old('unidade')) == $unidade->id ? 'selected' : '' }}>
+                {{ $unidade->descricao }}
+            </option>
         @endforeach
     </select>
 </div>
 
 <div class="col-md-3 mb-3">
     <label for="peso">Peso (Gramas)</label>
-    <input type="text" name="peso" value="{{ $produto->delalhes->peso ?? old('peso') }}" id="peso"
+    <input type="text" name="peso" value="{{ $produto->detalhes[0]->peso ?? old('peso') }}" id="peso"
         placeholder="Peso" class="form-control">
 </div>
 
 <div class="col-md-3 mb-3">
     <label for="preco">Preço</label>
-    <input type="text" name="preco" value="{{ $produto->delalhes->preco ?? old('preco') }}" id="preco"
+    <input type="text" name="preco" value="{{ $produto->detalhes[0]->preco_venda ?? old('preco') }}" id="preco"
         placeholder="Preço" class="form-control">
 </div>
 
 <div class="col-md-3 mb-3">
     <label for="estoque_minimo">Estoque Mínimo</label>
     <input type="text" name="estoque_minimo"
-        value="{{ $produto->delalhes->estoque_minimo ?? old('estoque_minimo') }}" id="estoque_minimo" placeholder="0"
+        value="{{ $produto->detalhes[0]->estoque_minimo ?? old('estoque_minimo') }}" id="estoque_minimo" placeholder="0"
         class="form-control estoque">
 </div>
 
 <div class="col-md-3 mb-3">
     <label for="estoque_maximo">Estoque Maximo</label>
     <input type="text" name="estoque_maximo"
-        value="{{ $produto->delalhes->estoque_maximo ?? old('estoque_maximo') }}" id="estoque_maximo" placeholder="0"
+        value="{{ $produto->detalhes[0]->estoque_maximo ?? old('estoque_maximo') }}" id="estoque_maximo" placeholder="0"
         class="form-control estoque">
 </div>
 
 <div class="col-md-3 mb-3">
     <label for="comprimento">Comprimento (Centimetros)</label>
-    <input type="text" name="comprimento" value="{{ $produto->delalhes->comprimento ?? old('comprimento') }}"
+    <input type="text" name="comprimento" value="{{ $produto->detalhes[0]->comprimento ?? old('comprimento') }}"
         id="comprimento" placeholder="Comprimento" class="form-control centimetros">
 </div>
 
 <div class="col-md-3 mb-3">
     <label for="altura">Altura (Centimetros)</label>
-    <input type="text" name="altura" value="{{ $produto->delalhes->altura ?? old('altura') }}" id="altura"
+    <input type="text" name="altura" value="{{ $produto->detalhes[0]->altura ?? old('altura') }}" id="altura"
         placeholder="Altura" class="form-control centimetros">
 </div>
 
 <div class="col-md-3 mb-3">
     <label for="largura">Largura (Centimetros)</label>
-    <input type="text" name="largura" value="{{ $produto->delalhes->largura ?? old('largura') }}" id="largura"
+    <input type="text" name="largura" value="{{ $produto->detalhes[0]->largura ?? old('largura') }}" id="largura"
         placeholder="Largura" class="form-control centimetros">
 </div>
 
