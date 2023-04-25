@@ -78,10 +78,7 @@ class ClienteController extends Controller
     private function criaOuAtualizaCliente($atualizar = false)
     {
         try {
-            $this->cliente->nome = $this->request->input('nome');
-            $this->cliente->email = $this->request->input('email');
-            $this->cliente->observacoes = $this->request->input('observacoes');
-            $this->cliente->empresa_id = auth()->user()->id;
+            $this->preencheClientePeloRequest();
             $this->cliente->save();
         } catch (\Throwable $th) {
             if ($atualizar) {
@@ -90,6 +87,18 @@ class ClienteController extends Controller
                 throw new CreateClienteException();
             }
         }
+    }
+
+    /**
+     * Preenche o cliente pelo que foi recebido no request
+     * @return void
+     */
+    private function preencheClientePeloRequest()
+    {
+        $this->cliente->nome = $this->request->input('nome');
+        $this->cliente->email = $this->request->input('email');
+        $this->cliente->observacoes = $this->request->input('observacoes');
+        $this->cliente->empresa_id = auth()->user()->id;
     }
 
     /**
