@@ -22,15 +22,28 @@ use Illuminate\Support\Facades\Crypt;
 
 class ProdutoController extends Controller
 {
-
+    /**
+     * Request que será recebido
+     * @var \Illuminate\Http\Request $request
+     */
     private Request $request;
+
+    /**
+     * Produto
+     * @var \App\Models\Produto $produto
+     */
     private Produto $produto;
+
+    /**
+     * Produto Detalhe
+     * @var \App\Models\ProdutoDetalhe $produtoDetalhe
+     */
     private ProdutoDetalhe $produtoDetalhe;
 
     /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
+     * Index da pagina de produto
+     * @param \Illuminate\Http\Request $request
+     * @return \Illuminate\Contracts\View\View|\Illuminate\Contracts\View\Factory
      */
     public function index(Request $request)
     {
@@ -40,9 +53,8 @@ class ProdutoController extends Controller
     }
 
     /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
+     * Pagina para criar um cliente
+     * @return \Illuminate\Contracts\View\View|\Illuminate\Contracts\View\Factory
      */
     public function create()
     {
@@ -52,10 +64,9 @@ class ProdutoController extends Controller
     }
 
     /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
+     * Recebe o request para criar um produto
+     * @param \App\Http\Requests\ProdutoRequest $request
+     * @return \Illuminate\Http\RedirectResponse|void
      */
     public function store(ProdutoRequest $request)
     {
@@ -81,13 +92,15 @@ class ProdutoController extends Controller
         }
     }
 
+    /**
+     * Cria ou atualiza um produto
+     * @param bool $atualizar
+     * @return void
+     */
     private function criaOuAtualizaProduto($atualizar = false)
     {
         try {
-            $this->produto->nome = $this->request->input('nome');
-            $this->produto->descricao = $this->request->input('descricao');
-            $this->produto->fornecedor_id = $this->request->input('fornecedor');
-            $this->produto->empresa_id = auth()->user()->id;
+            $this->preencheProdutoPeloRequest();
             $this->produto->save();
         } catch (\Throwable $th) {
             if ($atualizar) {
@@ -98,6 +111,11 @@ class ProdutoController extends Controller
         }
     }
 
+    /**
+     * Cria ou atualiza os detalhes de um produto
+     * @param bool $atualizar
+     * @return void
+     */
     private function criaOuAtualizaProdutoDetalhe($atualizar = false)
     {
         try {
@@ -112,6 +130,10 @@ class ProdutoController extends Controller
         }
     }
 
+    /**
+     * Preenche os detalhes do produto pelo que foi recebido no request
+     * @return void
+     */
     private function preencheProdutoDetalhePeloRequest()
     {
         $this->produtoDetalhe->produto_id = $this->produto->id;
@@ -126,21 +148,21 @@ class ProdutoController extends Controller
     }
 
     /**
-     * Display the specified resource.
-     *
-     * @param  \App\Produto  $produto
-     * @return \Illuminate\Http\Response
+     * Preenche o produto pelo que foi recebido no request
+     * @return void
      */
-    public function show(Produto $produto)
+    private function preencheProdutoPeloRequest()
     {
-        return view('app.produto.show', ['produto' => $produto]);
+        $this->produto->nome = $this->request->input('nome');
+        $this->produto->descricao = $this->request->input('descricao');
+        $this->produto->fornecedor_id = $this->request->input('fornecedor');
+        $this->produto->empresa_id = auth()->user()->id;
     }
 
     /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Produto  $produto
-     * @return \Illuminate\Http\Response
+     * Pagina para editar um produto recebendo um ID criptografado como parametro
+     * @param mixed $id
+     * @return \Illuminate\Contracts\View\View|\Illuminate\Contracts\View\Factory
      */
     public function edit($id)
     {
@@ -162,10 +184,10 @@ class ProdutoController extends Controller
     }
 
     /**
-     * Update the specified resource in storage.
-     *
-
-     * @return \Illuminate\Http\Response
+     * Recebe o request e um ID para editar um produto
+     * @param \App\Http\Requests\ProdutoRequest $request
+     * @param mixed $id
+     * @return \Illuminate\Http\RedirectResponse
      */
     public function update(ProdutoRequest $request, $id)
     {
@@ -196,12 +218,10 @@ class ProdutoController extends Controller
         }
     }
 
-
     /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * Recebe um ID para deletar um produto
+     * @param mixed $id
+     * @return \Illuminate\Http\RedirectResponse
      */
     public function destroy($id)
     {
@@ -222,6 +242,11 @@ class ProdutoController extends Controller
         }
     }
 
+    /**
+     * Busca um produto pelo ID
+     * @param mixed $id
+     * @return void
+     */
     private function getProduto($id)
     {
         $produto = Produto::find($id);
@@ -232,6 +257,10 @@ class ProdutoController extends Controller
         }
     }
 
+    /**
+     * Deleta um produto
+     * @return void
+     */
     private function deletarProduto()
     {
         try {
@@ -241,6 +270,10 @@ class ProdutoController extends Controller
         }
     }
 
+    /**
+     * Busca um produto pelo id do produto
+     * @return void
+     */
     private function getProdutoDetalhe()
     {
         $produtoDetalhe = ProdutoDetalhe::where('produto_id', $this->produto->id)->first();
