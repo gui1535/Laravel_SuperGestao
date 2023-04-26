@@ -12,14 +12,26 @@ use Illuminate\Support\Facades\Auth;
 
 class LoginController extends Controller
 {
-
+    /**
+     * Request que será recebido
+     * @var \Illuminate\Http\Request $request
+     */
     private Request $request;
 
+    /**
+     * Pagina de LOGIN
+     * @return \Illuminate\Contracts\View\View|\Illuminate\Contracts\View\Factory
+     */
     public function index(Request $request)
     {
         return view('site.login', ['titulo' => 'Login']);
     }
 
+    /**
+     * Recebe o request para autenticação
+     * @param \App\Http\Requests\LoginRequest $request
+     * @return \Illuminate\Http\RedirectResponse
+     */
     public function autenticar(LoginRequest $request)
     {
         try {
@@ -38,6 +50,10 @@ class LoginController extends Controller
         }
     }
 
+    /**
+     * Verifica se usuário existe
+     * @return true
+     */
     private function verificaSeExisteUsuario()
     {
         $credentials = [
@@ -51,6 +67,10 @@ class LoginController extends Controller
         }
     }
 
+    /**
+     * Efetuar loggout
+     * @return \Illuminate\Http\RedirectResponse
+     */
     public function sair()
     {
         try {
