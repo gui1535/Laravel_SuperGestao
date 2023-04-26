@@ -2,39 +2,65 @@
 
 namespace App\Http\Controllers;
 
+use App\Exceptions\CreateContatoException;
+use App\Exceptions\ErrorUnexpectedException;
+use App\Http\Requests\ContatoRequest;
 use Illuminate\Http\Request;
 use App\Models\SiteContato;
 use App\Models\MotivoContato;
 
 class ContatoController extends Controller
 {
+    /**
+     * Request que será recebido
+     * @var \Illuminate\Http\Request $request
+     */
+    private Request $request;
 
-    public function salvar(Request $request) {
+    /**
+     * Contato
+     * @var \App\Models\SiteContato $contato
+     */
+    private SiteContato $contato;
 
-        //realizar a validação dos dados do formulário recebidos no request
-        $regras = [
-            'nome' => 'required|min:3|max:40|unique:site_contatos',
-            'telefone' => 'required',
-            'email' => 'email',
-            'motivo_contatos_id' => 'required',
-            'mensagem' => 'required|max:2000'
-        ];
+    /**
+     * Recebe o request para criar um contato
+     * @param \App\Http\Requests\ContatoRequest $request
+     * @return \Illuminate\Http\RedirectResponse|void
+     */
+    public function store(ContatoRequest $request)
+    {
+        try {
+            $this->request = $request;
 
-        $feedback = [
-            'nome.min' => 'O campo nome precisa ter no mínimo 3 caracteres',
-            'nome.max' => 'O campo nome deve ter no máximo 40 caracteres',
-            'nome.unique' => 'O nome informado já está em uso',
-            
-            'email.email' => 'O email informado não é válido',
+            $this->contato = new SiteContato();
 
-            'mensagem.max' => 'A mensagem deve ter no máximo 2000 caracteres',
-            
-            'required' => 'O campo :attribute deve ser preenchido'
-        ];
-        
-        $request->validate($regras, $feedback);
+            $this->criaOuAtualizaContato();
 
-        SiteContato::create($request->all());
-        return redirect()->route('site.index');
+            return redirect()->back()->with('success', 'Contato enviado com sucesso!');
+        } catch (CreateContatoException $e) {
+            return $e->render();
+        } catch (\Throwable $th) {
+            return ErrorUnexpectedException::render();
+        }
+    }
+
+    /**
+     * Cria ou atualiza um contato
+     * @param bool $atualizar
+     * @return void
+     */
+    private function criaOuAtualizaContato($atualizar = false)
+    {
+        try {
+            $this->contato->nome = $this->request->input('nome');
+            $this->contato->telefone = $this->request->input('telefone');
+            $this->contato->email = $this->request->input('email');
+            $this->contato->mensagem = $this->request->input('mensagem');
+            $this->contato->motivo_contatos_id = $this->request->input('motivo-contato');
+            $this->contato->save();
+        } catch (\Throwable $th) {
+            throw new CreateContatoException();
+        }
     }
 }

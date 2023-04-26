@@ -9,8 +9,8 @@
 
     <div class="col-md-12 mb-3">
         <label for="telefone" class="form-label required">Telefone</label>
-        <input name="telefone" class="form-control" required id="telefone"
-            value="{{ old('telefone') }}" type="text" placeholder="Telefone">
+        <input name="telefone" class="form-control" required id="telefone" value="{{ old('telefone') }}" type="text"
+            placeholder="Telefone">
     </div>
 
     <div class="col-md-12 mb-3">
@@ -21,7 +21,7 @@
 
     <div class="col-md-12 mb-3">
         <label for="motivo-contato" class="form-label required">Motivo de Contato</label>
-        <select name="motivo-contato" class="form-select cursor-pointer">
+        <select name="motivo-contato" required class="form-select cursor-pointer">
             <option value="">Qual o motivo do contato?</option>
 
             @foreach ($motivo_contatos as $key => $motivo_contato)
@@ -34,7 +34,7 @@
 
     <div class="col-md-12 mb-3">
         <label for="mensagem" class="form-label required">Mensagem</label>
-        <textarea name="mensagem" id="mensagem" class="form-control">{{ old('mensagem') != '' ? old('mensagem') : '' }}</textarea>
+        <textarea name="mensagem" required id="mensagem" class="form-control">{{ old('mensagem') != '' ? old('mensagem') : '' }}</textarea>
     </div>
 
     <button type="submit" class="btn btn-success w-100">ENVIAR</button>

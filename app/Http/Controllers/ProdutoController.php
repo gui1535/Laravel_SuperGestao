@@ -88,7 +88,7 @@ class ProdutoController extends Controller
         } catch (CreateProdutoDetalhesException $e) {
             return $e->render();
         } catch (Exception $e) {
-            return $e;
+            return ErrorUnexpectedException::render();
         }
     }
 

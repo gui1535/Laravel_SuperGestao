@@ -16,8 +16,8 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', 'PrincipalController@principal')->name('site.index')->middleware('log.acesso');
 
 Route::get('/sobre-nos', 'SobreNosController@sobreNos')->name('site.sobrenos');
-    
-Route::post('/contato', 'ContatoController@salvar')->name('site.contato');
+
+Route::post('/contato', 'ContatoController@store')->name('site.contato');
 
 Route::get('/login', 'LoginController@index')->name('site.login');
 Route::post('/login', 'LoginController@autenticar')->name('site.login');
@@ -25,37 +25,28 @@ Route::post('/login', 'LoginController@autenticar')->name('site.login');
 Route::get('/cadastrar-se', 'EmpresaController@indexCadastro')->name('site.cadastrar');
 Route::post('/cadastrar-se', 'EmpresaController@cadastrar')->name('site.cadastrar');
 
-Route::middleware('autenticacao')->prefix('/app')->group(function() {
+Route::middleware('autenticacao')->prefix('/app')->group(function () {
+    // Home
     Route::get('/home', 'HomeController@index')->name('app.home');
-    Route::get('/sair', 'LoginController@sair')->name('app.sair');
-        
-    // Route::get('/fornecedor', 'FornecedorController@index')->name('app.fornecedor');
-    // Route::post('/fornecedor/listar', 'FornecedorController@listar')->name('app.fornecedor.listar');
-    // Route::get('/fornecedor/listar', 'FornecedorController@listar')->name('app.fornecedor.listar');
-    // Route::get('/fornecedor/adicionar', 'FornecedorController@adicionar')->name('app.fornecedor.adicionar');
-    // Route::post('/fornecedor/adicionar', 'FornecedorController@adicionar')->name('app.fornecedor.adicionar');
-    // Route::get('/fornecedor/editar/{id}', 'FornecedorController@editar')->name('app.fornecedor.editar');
-    // Route::get('/fornecedor/excluir/{id}', 'FornecedorController@excluir')->name('app.fornecedor.excluir');
 
+    // Sair
+    Route::get('/sair', 'LoginController@sair')->name('app.sair');
+
+    // Fornecedor
     Route::resource('fornecedor', 'FornecedorController');
-    
-    //produtos
+
+    // Produtos
     Route::resource('produto', 'ProdutoController');
 
-    //produtos detalhes
-    Route::resource('produto-detalhe', 'ProdutoDetalheController');
-
+    // Clientes
     Route::resource('cliente', 'ClienteController');
-    
+
+    // Pedidos
     Route::resource('pedido', 'PedidoController');
-    //Route::resource('pedido-produto', 'PedidoProdutoController');
-    Route::post('pedido-produto/store/{pedido}', 'PedidoProdutoController@store')->name('pedido-produto.store');
-    //Route::delete('pedido-produto.destroy/{pedido}/{produto}', 'PedidoProdutoController@destroy')->name('pedido-produto.destroy');
-    Route::delete('pedido-produto.destroy/{pedidoProduto}/{pedido_id}', 'PedidoProdutoController@destroy')->name('pedido-produto.destroy');
 });
 
 Route::get('/teste/{p1}/{p2}', 'TesteController@teste')->name('teste');
 
-Route::fallback(function() {
-    echo 'A rota acessada não existe. <a href="'.route('site.index').'">clique aqui</a> para ir para página inicial';
+Route::fallback(function () {
+    echo 'A rota acessada não existe. <a href="' . route('site.index') . '">clique aqui</a> para ir para página inicial';
 });
