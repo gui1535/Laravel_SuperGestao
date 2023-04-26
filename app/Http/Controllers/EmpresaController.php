@@ -21,15 +21,19 @@ class EmpresaController extends Controller
     private User $usuario;
 
     /**
-     * Blade Cadastro
+     * Pagina para cadastrar uma empresa
      * @return \Illuminate\Contracts\View\View
      */
-    public function indexCadastro(): View
+    public function indexCadastro()
     {
         return view('site.cadastrar', ['titulo' => 'Cadastro']);
     }
 
-
+    /**
+     * Recebe o request para criar uma empresa
+     * @param \App\Http\Requests\EmpresaRequest $request
+     * @return \Illuminate\Http\RedirectResponse|void
+     */
     public function cadastrar(EmpresaRequest $request)
     {
         try {
@@ -52,7 +56,7 @@ class EmpresaController extends Controller
     }
 
     /**
-     * Cria empresa com o request recebido
+     * Cria empresa
      * @return void
      */
     private function criaEmpresa()
