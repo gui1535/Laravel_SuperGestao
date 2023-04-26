@@ -6,7 +6,12 @@ use Illuminate\Http\Request;
 
 class HomeController extends Controller
 {
-    public function index() {
+    /**
+     * Pagina inicial HOME
+     * @return \Illuminate\Contracts\View\View|\Illuminate\Contracts\View\Factory
+     */
+    public function index()
+    {
         return view('app.home');
     }
 }
