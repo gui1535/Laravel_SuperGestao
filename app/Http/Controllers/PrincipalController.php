@@ -7,7 +7,12 @@ use App\Models\MotivoContato;
 
 class PrincipalController extends Controller
 {
-    public function principal() {
+    /**
+     * Pagina principal
+     * @return \Illuminate\Contracts\View\View
+     */
+    public function principal()
+    {
 
         $motivo_contatos = MotivoContato::all();
 
