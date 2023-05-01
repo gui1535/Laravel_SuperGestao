@@ -10426,7 +10426,8 @@ html body .waves-notransition {
     height: 100% !important;
 }
 
-.select2-selection.select2-selection--single {
+.select2-selection.select2-selection--single,
+.select2-container .select2-selection--multiple {
     border: 1px solid #d0d0d0 !important;
 }
 
@@ -10442,4 +10443,42 @@ html body .waves-notransition {
 
 .bg-blue-primary {
     background-color: #1a9bfc;
+}
+
+.select2-selection--multiple {
+    display: flex !important;
+    align-items: center !important;
+}
+
+.h-65 {
+    height: 65% !important;
+}
+
+.h-55 {
+    height: 55% !important;
+}
+
+.spinner-small-loading {
+    width: 1rem;
+    height: 1rem;
+}
+
+.w-90{
+    width: 90% !important;
+}
+
+.w-10{
+    width: 10% !important;
+}
+
+.w-85{
+    width: 85% !important;
+}
+
+.w-15{
+    width: 15% !important;
+}
+
+.cursor-pointer{
+    cursor: pointer;
 }

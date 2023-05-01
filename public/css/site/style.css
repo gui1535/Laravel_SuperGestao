@@ -128,3 +128,8 @@ span {
         width: 80% !important;
     }
 }
+
+.btn-primary {
+    background-color: #1e4db7 !important;
+    color: white !important;
+}
