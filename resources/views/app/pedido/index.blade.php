@@ -77,11 +77,6 @@
                                         <td class="text-center">{{ $pedido->codigo }}</td>
                                         <td>{{ $pedido->cliente->nome }}</td>
                                         <td class="text-center d-flex justify-content-center">
-                                            <a href="{{ route('pedido.show', ['pedido' => Crypt::encrypt($pedido->id)]) }}">
-                                                <button class="btn">
-                                                    <i class="mdi mdi-eye fs-4"></i>
-                                                </button>
-                                            </a>
 
                                             <a href="{{ route('pedido.edit', ['pedido' => Crypt::encrypt($pedido->id)]) }}">
                                                 <button class="btn">

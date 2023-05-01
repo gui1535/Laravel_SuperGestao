@@ -60,7 +60,8 @@
                                 @endif
                                 @if (count($produtos) == 0)
                                     <li>
-                                        Não há produtos cadastrados para criar um novo pedido.
+                                        Não há produtos cadastrados, mas você poderá criar um
+                                        pedido sem produtos e edita-lo futuramente.
                                         <a class="text-danger" href="{{ route('produto.create') }}">Cadastrar Produto</a>
                                     </li>
                                 @endif
@@ -79,10 +80,49 @@
 
                 <div class="col-12">
 
-                    @component('app.pedido._components.form_create_edit', ['clientes' => $clientes, 'produtos' => $produtos])
+                    @component('app.pedido._components.form_create_edit', [
+                        'clientes' => $clientes,
+                        'produtos' => $produtos,
+                        'pedido' => $pedido ?? '',
+                    ])
                     @endcomponent
                 </div>
             </div>
         </div>
     </div>
 @endsection
+
+@push('scripts')
+    <script>
+        $('#btn-submit').on('click', function(e) {
+            $('#form-pedido').find('input[required]').each(function() {
+                if (!$(this).val()) {
+                    return false;
+                } else {
+                    if ($('[name="produtos[]"]').val() == undefined) {
+                        e.preventDefault();
+                        bootbox.confirm({
+                            title: 'Alerta',
+                            message: `Tem certeza que deseja criar um pedido sem nenhum produto?`,
+                            buttons: {
+                                cancel: {
+                                    label: '<i class="fa fa-times"></i> Cancelar'
+                                },
+                                confirm: {
+                                    label: '<i class="fa fa-check"></i> Continuar'
+                                }
+                            },
+                            callback: function(result) {
+                                if (result) {
+                                    $('#produto').val('123')
+                                    $('#form-pedido').submit();
+                                }
+                            }
+                        });
+                        return false;
+                    }
+                }
+            });
+        })
+    </script>
+@endpush
