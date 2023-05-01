@@ -6,7 +6,7 @@ use Exception;
 
 class CreateFornecedorException extends Exception
 {
-  /**
+    /**
      * Render Exception
      */
     public function render()
