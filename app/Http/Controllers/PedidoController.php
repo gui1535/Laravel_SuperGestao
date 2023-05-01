@@ -2,24 +2,40 @@
 
 namespace App\Http\Controllers;
 
+use App\Exceptions\CreatePedidoException;
+use App\Exceptions\CreatePedidoProdutosException;
 use App\Exceptions\ErrorUnexpectedException;
 use App\Exceptions\PedidoDeleteException;
 use App\Exceptions\PedidoNotFoundException;
+use App\Exceptions\PedidoProdutosUpdateException;
+use App\Exceptions\PedidoUpdateException;
+use App\Http\Requests\PedidoRequest;
 use Illuminate\Http\Request;
 use App\Models\Pedido;
 use App\Models\Cliente;
+use App\Models\PedidoProduto;
 use App\Models\Produto;
 use Exception;
 use Illuminate\Support\Facades\Crypt;
 
 class PedidoController extends Controller
 {
-
-    private Pedido $pedido;
     /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
+     * Request
+     * @var \Illuminate\Http\Request $request
+     */
+    private Request $request;
+
+    /**
+     * Pedido
+     * @var \App\Models\Pedido $pedido
+     */
+    private Pedido $pedido;
+
+    /**
+     * Index da pagina de pedidos
+     * @param \Illuminate\Http\Request $request
+     * @return \Illuminate\Contracts\View\View|\Illuminate\Contracts\View\Factory
      */
     public function index(Request $request)
     {
@@ -28,9 +44,8 @@ class PedidoController extends Controller
     }
 
     /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
+     * Pagina para criar um pedido
+     * @return \Illuminate\Contracts\View\View|\Illuminate\Contracts\View\Factory
      */
     public function create()
     {
@@ -40,39 +55,88 @@ class PedidoController extends Controller
     }
 
     /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
+     * Recebe o request para criar um pedido
+     * @param \App\Http\Requests\PedidoRequest $request
+     * @return \Illuminate\Http\RedirectResponse|void
      */
-    public function store(Request $request)
+    public function store(PedidoRequest $request)
     {
-        $regras = [
-            'cliente_id' => 'exists:clientes,id'
-        ];
+        try {
+            $this->request = $request;
 
-        $feedback = [
-            'cliente_id.exists' => 'O cliente informado não existe'
-        ];
+            $this->pedido = new Pedido();
 
-        $request->validate($regras, $feedback);
+            $this->criaOuAtualizaPedido();
 
-        $pedido = new Pedido();
-        $pedido->cliente_id = $request->get('cliente_id');
-        $pedido->save();
+            if ($this->request->input('produtos') && $this->request->input('quantidades')) {
+                $this->criaOuAtualizaProdutosDoPedido();
+            }
 
-        return redirect()->route('pedido.index');
+            return redirect()->route('pedido.index')->with('success', 'Pedido cadastrado com sucesso!');
+        } catch (CreatePedidoException $e) {
+            return $e->render();
+        } catch (CreatePedidoProdutosException $e) {
+            return $e->render();
+        } catch (Exception $e) {
+            return ErrorUnexpectedException::render();
+        }
     }
 
     /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * Cria ou atualiza um pedido
+     * @param bool $atualizar
+     * @return void
      */
-    public function show($id)
+    private function criaOuAtualizaPedido($atualizar = false)
     {
-        //
+        try {
+            $this->pedido->codigo = $this->request->input('codigo');
+            $this->pedido->cliente_id = $this->request->input('cliente');
+            $this->pedido->save();
+        } catch (\Throwable $th) {
+            if ($atualizar) {
+                throw new PedidoUpdateException();
+            } else {
+                throw new CreatePedidoException();
+            }
+        }
+    }
+
+    /**
+     * Cria ou atualiza os produtos do pedido
+     * @param bool $atualizar
+     * @return void
+     */
+    private function criaOuAtualizaProdutosDoPedido($atualizar = false)
+    {
+        try {
+            $pedidoDelete = PedidoProduto::query();
+            $pedidoDelete->where('pedido_id', $this->pedido->id);
+            foreach ($this->request->input('produtos') as $key => $prod) {
+                // Decrypt ID produto
+                $prod = Crypt::decrypt($prod);
+
+                // Procura PedidoProduto
+                $pedidoProduto = PedidoProduto::where('pedido_id', $this->pedido->id)->where('produto_id', $prod)->first();
+
+                // Se não existir, criará um novo
+                if (!$pedidoProduto) {
+                    $pedidoProduto = new PedidoProduto();
+                    $pedidoProduto->pedido_id = $this->pedido->id;
+                    $pedidoProduto->produto_id = $prod;
+                }
+                $pedidoProduto->quantidade = $this->request->input('quantidades')[$key];
+                $pedidoProduto->save();
+                $pedidoDelete->where('produto_id', '<>', $prod);
+            }
+            $pedidoDelete->delete();
+        } catch (\Throwable $th) {
+            if ($atualizar) {
+                throw new PedidoProdutosUpdateException();
+            } else {
+                throw new CreatePedidoProdutosException();
+            }
+        }
     }
 
     /**
@@ -83,7 +147,21 @@ class PedidoController extends Controller
      */
     public function edit($id)
     {
-        //
+        try {
+            $id = Crypt::decrypt($id);
+
+            $this->getPedido($id);
+
+            $clientes = Cliente::all();
+
+            $produtos = Produto::all();
+
+            return view('app.pedido.create', ['clientes' => $clientes, 'produtos' => $produtos, 'pedido' => $this->pedido]);
+        } catch (PedidoNotFoundException $e) {
+            return $e->render();
+        } catch (Exception $th) {
+            return ErrorUnexpectedException::render();
+        }
     }
 
     /**
@@ -93,16 +171,35 @@ class PedidoController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(PedidoRequest $request, $id)
     {
-        //
+        try {
+            $id = Crypt::decrypt($id);
+
+            $this->request = $request;
+
+            $this->getPedido($id);
+
+            $this->criaOuAtualizaPedido();
+
+            if ($this->request->input('produtos') && $this->request->input('quantidades')) {
+                $this->criaOuAtualizaProdutosDoPedido();
+            }
+
+            return redirect()->back()->with('success', 'Pedido atualizado com sucesso!');
+        } catch (CreatePedidoException $e) {
+            return $e->render();
+        } catch (CreatePedidoProdutosException $e) {
+            return $e->render();
+        } catch (Exception $e) {
+            return ErrorUnexpectedException::render();
+        }
     }
 
     /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * Recebe um ID para deletar um pedido
+     * @param mixed $id
+     * @return \Illuminate\Http\RedirectResponse
      */
     public function destroy($id)
     {
@@ -123,7 +220,10 @@ class PedidoController extends Controller
         }
     }
 
-
+    /**
+     * Deleta um pedido
+     * @return void
+     */
     private function deletarPedido()
     {
         try {
@@ -133,6 +233,11 @@ class PedidoController extends Controller
         }
     }
 
+    /**
+     * Busca um pedido pelo ID
+     * @param mixed $id
+     * @return void
+     */
     private function getPedido($id)
     {
         $pedido = Pedido::find($id);
