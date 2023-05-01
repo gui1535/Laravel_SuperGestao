@@ -14,7 +14,7 @@ $('.btn-delete-produto').on('click', function () {
     const formDelete = $(this).parents('form');
     bootbox.confirm({
         title: 'Deletar',
-        message: `Tem certeza que deseja deletar o pedido <b>${nome}</b>`,
+        message: `Tem certeza que deseja deletar o produto <b>${nome}</b>`,
         buttons: {
             cancel: {
                 label: '<i class="fa fa-times"></i> Cancelar'
