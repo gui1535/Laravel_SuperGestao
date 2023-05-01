@@ -11,11 +11,6 @@ class Produto extends Model
     use SoftDeletes;
     protected $fillable = ['nome', 'descricao', 'peso', 'unidade_id'];
 
-    public function produtoDetalhe()
-    {
-        return $this->hasOne('App\ProdutoDetalhe');
-    }
-
     public function newQuery($excludeDeleted = true)
     {
         $query = parent::newQuery($excludeDeleted);
