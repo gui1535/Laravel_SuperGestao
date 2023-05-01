@@ -18,13 +18,13 @@
 @else
     <div class="row">
 @endif
-<div class="col-md-6 mb-3">
+<div class="col-md-5 mb-3">
     <label class="required" for="nome">Nome</label>
     <input type="text" maxlength="50" required name="nome" value="{{ $produto->nome ?? old('nome') }}"
         id="nome" placeholder="Nome" class="form-control">
 </div>
 
-<div class="col-md-6 mb-3">
+<div class="col-md-4 mb-3">
     <label class="required" for="fornecedor">Fornecedor</label>
     <select required name="fornecedor" id="fornecedor" class="form-select">
         <option value=""></option>
@@ -51,33 +51,33 @@
     </select>
 </div>
 
-<div class="col-md-3 mb-3">
+<div class="col-md-2 mb-3">
     <label for="peso">Peso (Gramas)</label>
     <input type="text" name="peso" value="{{ $produto->detalhes[0]->peso ?? old('peso') }}" id="peso"
         placeholder="Peso" class="form-control">
 </div>
 
-<div class="col-md-3 mb-3">
+<div class="col-md-2 mb-3">
     <label for="preco">Preço</label>
     <input type="text" name="preco" value="{{ $produto->detalhes[0]->preco_venda ?? old('preco') }}" id="preco"
         placeholder="Preço" class="form-control">
 </div>
 
-<div class="col-md-3 mb-3">
+{{-- <div class="col-md-3 mb-3">
     <label for="estoque_minimo">Estoque Mínimo</label>
     <input type="text" name="estoque_minimo"
         value="{{ $produto->detalhes[0]->estoque_minimo ?? old('estoque_minimo') }}" id="estoque_minimo" placeholder="0"
         class="form-control estoque">
-</div>
+</div> --}}
 
-<div class="col-md-3 mb-3">
+{{-- <div class="col-md-3 mb-3">
     <label for="estoque_maximo">Estoque Maximo</label>
     <input type="text" name="estoque_maximo"
         value="{{ $produto->detalhes[0]->estoque_maximo ?? old('estoque_maximo') }}" id="estoque_maximo" placeholder="0"
         class="form-control estoque">
-</div>
+</div> --}}
 
-<div class="col-md-3 mb-3">
+<div class="col-md-2 mb-3">
     <label for="comprimento">Comprimento (Centimetros)</label>
     <input type="text" name="comprimento" value="{{ $produto->detalhes[0]->comprimento ?? old('comprimento') }}"
         id="comprimento" placeholder="Comprimento" class="form-control centimetros">
