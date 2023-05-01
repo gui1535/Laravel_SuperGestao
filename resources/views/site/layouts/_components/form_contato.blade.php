@@ -37,7 +37,7 @@
         <textarea name="mensagem" required id="mensagem" class="form-control">{{ old('mensagem') != '' ? old('mensagem') : '' }}</textarea>
     </div>
 
-    <button type="submit" class="btn btn-success w-100">ENVIAR</button>
+    <button type="submit" class="btn btn-primary w-100">ENVIAR</button>
 </form>
 
 @if ($errors->any())
