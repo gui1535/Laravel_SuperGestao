@@ -8,7 +8,8 @@
 @endpush
 @if (count($fornecedores) != 0)
     @if (isset($produto->id))
-        <form method="post" action="{{ route('produto.update', ['produto' => Crypt::encrypt($produto->id)]) }}" class="row">
+        <form method="post" action="{{ route('produto.update', ['produto' => Crypt::encrypt($produto->id)]) }}"
+            class="row">
             @csrf
             @method('PUT')
         @else
@@ -43,7 +44,7 @@
     <select required name="unidade" id="unidade" class="form-select">
         <option value=""></option>
         @foreach ($unidades as $unidade)
-        <option value="{{ $unidade->id }}"
+            <option value="{{ $unidade->id }}"
                 {{ ($produto->detalhes[0]->unidade_id ?? old('unidade')) == $unidade->id ? 'selected' : '' }}>
                 {{ $unidade->descricao }}
             </option>
@@ -52,15 +53,15 @@
 </div>
 
 <div class="col-md-2 mb-3">
-    <label for="peso">Peso (Gramas)</label>
-    <input type="text" name="peso" value="{{ $produto->detalhes[0]->peso ?? old('peso') }}" id="peso"
-        placeholder="Peso" class="form-control">
+    <label for="preco" class="required">Preço</label>
+    <input type="text" required name="preco" value="{{ $produto->detalhes[0]->preco_venda ?? old('preco') }}"
+        id="preco" placeholder="Preço" class="form-control">
 </div>
 
 <div class="col-md-2 mb-3">
-    <label for="preco">Preço</label>
-    <input type="text" name="preco" value="{{ $produto->detalhes[0]->preco_venda ?? old('preco') }}" id="preco"
-        placeholder="Preço" class="form-control">
+    <label for="peso">Peso (Gramas)</label>
+    <input type="text" name="peso" value="{{ $produto->detalhes[0]->peso ?? old('peso') }}" id="peso"
+        placeholder="Peso" class="form-control">
 </div>
 
 {{-- <div class="col-md-3 mb-3">

@@ -7,30 +7,31 @@
 
         <div class="page-breadcrumb">
             <div class="row align-items-center">
-                <div class="col-9">
-                    <div>
-                        <nav aria-label="breadcrumb">
-                            <ol class="breadcrumb mb-0 d-flex
+                <div class="col-10">
+                    <nav aria-label="breadcrumb">
+                        <ol class="breadcrumb mb-0 d-flex
                             align-items-center">
-                                <li class="breadcrumb-item">
-                                    <a href="{{ route('app.home') }}" class="link">
-                                        <i class="mdi mdi-home-outline fs-4"></i>
-                                    </a>
-                                </li>
-                                <li class="breadcrumb-item">
-                                    <a href="{{ route('pedido.index') }}" class="link">
-                                        Pedido
-                                    </a>
-                                </li>
-                                <li class="breadcrumb-item active" aria-current="page">
-                                    {{ isset($pedido) ? 'Editar' : 'Novo' }}
-                                </li>
-                            </ol>
-                        </nav>
-                        <h1 class="mb-0 fw-bold">
-                            {{ isset($pedido) ? 'Editar Pedido' : 'Novo Pedido' }}
-                        </h1>
-                    </div>
+                            <li class="breadcrumb-item">
+                                <a href="{{ route('app.home') }}" class="link">
+                                    <i class="mdi mdi-home-outline fs-4"></i>
+                                </a>
+                            </li>
+                            <li class="breadcrumb-item">
+                                <a href="{{ route('pedido.index') }}" class="link">
+                                    Pedido
+                                </a>
+                            </li>
+                            <li class="breadcrumb-item active" aria-current="page">
+                                {{ isset($pedido) ? 'Editar' : 'Novo' }}
+                            </li>
+                        </ol>
+                    </nav>
+                    <h1 class="mb-0 fw-bold">
+                        {{ isset($pedido) ? 'Editar Pedido' : 'Novo Pedido' }}
+                    </h1>
+                </div>
+                <div class="col-2 h-100 d-flex justify-content-end align-items-center">
+                    <span id="preco-total-pedido" class="fs-2"></span>
                 </div>
             </div>
         </div>

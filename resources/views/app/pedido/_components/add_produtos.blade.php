@@ -29,6 +29,8 @@
             $('#produto').select2();
             deleteProduto();
             maskInputs();
+            calculaTotalPedido();
+            changeInputQuantidade();
         });
 
         /**
@@ -37,6 +39,36 @@
         function maskInputs() {
             $('.preco').mask('000.000,00', {
                 reverse: true
+            });
+        }
+
+        /**
+         * Calcula total do pedido
+         */
+        function calculaTotalPedido() {
+            let valoresProdutos = 0;
+            $('#table-produtos tbody tr').each(function() {
+                if (!$(this).hasClass('d-none')) {
+                    let dataset = $(`#produto option[data-id="${$(this).data('id')}"]`)[0]?.dataset || {};
+                    let valor = parseFloat(dataset.preco) || 0;
+                    let quantidade = $(this).find('input')[1] ? parseInt($(this).find('input')[1].value) : 0;
+                    valoresProdutos += valor * quantidade;
+                }
+            });
+            let numeroFormatado = valoresProdutos.toLocaleString('pt-BR', {
+                style: 'currency',
+                currency: 'BRL'
+            });
+            $("#preco-total-pedido").empty();
+            $("#preco-total-pedido").append(numeroFormatado)
+        }
+
+        /**
+         * Ação quando mudar uma quantidade de algum produto
+         */
+        function changeInputQuantidade() {
+            $('input[name="quantidades[]"]').on('change', function() {
+                calculaTotalPedido();
             });
         }
 
@@ -52,6 +84,7 @@
                 }
             }
             loadingOrStopButton($(this), false)
+            calculaTotalPedido()
         })
 
         /**
@@ -92,6 +125,7 @@
 
                 deleteProduto();
                 maskInputs()
+                changeInputQuantidade();
             }
         }
 
@@ -112,6 +146,7 @@
                 if ($(`tr[data-id]`).length == 0) {
                     $('#nao-ha-produtos').removeClass('d-none')
                 }
+                calculaTotalPedido()
             })
         }
 
