@@ -68,6 +68,7 @@
                                 <tr>
                                     <th class="text-center" scope="col">Código</th>
                                     <th scope="col">Cliente</th>
+                                    <th scope="col">Preço Total</th>
                                     <th class="text-center">Ações</th>
                                 </tr>
                             </thead>
@@ -76,6 +77,12 @@
                                     <tr>
                                         <td class="text-center">{{ $pedido->codigo }}</td>
                                         <td>{{ $pedido->cliente->nome }}</td>
+                                        <td>
+                                            <span>R$ </span>
+                                            <span class="preco">
+                                                {{ $pedido->precoTotal }}
+                                            </span>
+                                        </td>
                                         <td class="text-center d-flex justify-content-center">
 
                                             <a href="{{ route('pedido.edit', ['pedido' => Crypt::encrypt($pedido->id)]) }}">

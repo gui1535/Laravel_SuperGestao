@@ -54,8 +54,11 @@
 
 <div class="col-md-2 mb-3">
     <label for="preco" class="required">Preço</label>
-    <input type="text" required name="preco" value="{{ $produto->detalhes[0]->preco_venda ?? old('preco') }}"
-        id="preco" placeholder="Preço" class="form-control">
+    <div class="input-group">
+        <span class="input-group-text" id="basic-addon1">R$</span>
+        <input type="text" required name="preco" value="{{ $produto->detalhes[0]->preco_venda ?? old('preco') }}"
+            id="preco" placeholder="Preço" class="form-control preco">
+    </div>
 </div>
 
 <div class="col-md-2 mb-3">

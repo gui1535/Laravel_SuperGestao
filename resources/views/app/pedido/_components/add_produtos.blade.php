@@ -112,7 +112,8 @@
                 tr.append($('<td>').append(dataSetProduto.nome));
                 tr.append($('<td>').append(dataSetProduto.descricao));
                 tr.append($('<td>').append(dataSetProduto.fornecedor));
-                tr.append($('<td>').append(dataSetProduto.preco).addClass(classCentralizar + ' preco'));
+                tr.append($('<td>').append(`<span>R$ </span><span class="preco">${dataSetProduto.preco}</span>`).addClass(
+                    classCentralizar));
                 tr.append($('<td>').append(dataSetProduto.comprimento).addClass(classCentralizar));
                 tr.append($('<td>').append(dataSetProduto.altura).addClass(classCentralizar));
                 tr.append($('<td>').append(dataSetProduto.largura).addClass(classCentralizar));

@@ -2,9 +2,11 @@
 
 $('#fornecedor').select2();
 $('#unidade').select2();
-$('#preco').mask('000.000,00', {
+
+$('.preco').mask('000.000,00', {
     reverse: true
 });
+
 $('.estoque').mask('00000')
 $('.centimetros').mask('00000000.00', { reverse: true });
 $('#peso').mask('00000000.00', { reverse: true });

@@ -92,8 +92,11 @@
                                                 {{ $produto->fornecedor->site }}
                                             </a>
                                         </td>
-                                        <td class="text-center" id="preco">
-                                            {{ $produto->detalhes[0]->preco_venda ?? '-' }}
+                                        <td class="text-center">
+                                            <span>R$ </span>
+                                            <span class="preco">
+                                                {{ $produto->detalhes[0]->preco_venda ?? '0' }}
+                                            </span>
                                         </td>
                                         <td class="text-center">
                                             {{ $produto->detalhes[0]->peso ?? '-' }}

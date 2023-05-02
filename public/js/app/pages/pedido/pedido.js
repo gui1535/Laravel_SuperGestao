@@ -1,3 +1,7 @@
+$('.preco').mask('000.000,00', {
+    reverse: true
+});
+
 $('.btn-delete-pedido').on('click', function () {
     const codigo = $(this).data('codigo')
     const formDelete = $(this).parents('form');

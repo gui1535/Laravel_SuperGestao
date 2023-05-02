@@ -27,8 +27,11 @@
                     <td>
                         {{ $prod->produto->fornecedor->nome }}
                     </td>
-                    <td class="text-center preco">
-                        {{ $prod->produto->detalhes[0]->preco_venda ?? '-' }}
+                    <td class="text-center">
+                        <span>R$ </span>
+                        <span class="preco">
+                            {{ $prod->produto->detalhes[0]->preco_venda ?? '0' }}
+                        </span>
                     </td>
                     <td class="text-center">
                         {{ $prod->produto->detalhes[0]->comprimento ?? '-' }}
