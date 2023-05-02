@@ -92,6 +92,7 @@ class PedidoController extends Controller
         try {
             $this->pedido->codigo = $this->request->input('codigo');
             $this->pedido->cliente_id = $this->request->input('cliente');
+            $this->pedido->empresa_id = auth()->user()->empresa->id;
             $this->pedido->save();
         } catch (\Throwable $th) {
             if ($atualizar) {

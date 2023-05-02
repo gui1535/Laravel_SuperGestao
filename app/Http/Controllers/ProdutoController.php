@@ -156,7 +156,7 @@ class ProdutoController extends Controller
         $this->produto->nome = $this->request->input('nome');
         $this->produto->descricao = $this->request->input('descricao');
         $this->produto->fornecedor_id = $this->request->input('fornecedor');
-        $this->produto->empresa_id = auth()->user()->id;
+        $this->produto->empresa_id = auth()->user()->empresa->id;
     }
 
     /**
