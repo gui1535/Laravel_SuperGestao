@@ -31,6 +31,7 @@ class ProdutoRequest extends FormRequest
             'nome'  => 'required|min:3|max:50',
             'fornecedor' => 'required',
             'unidade'  => 'required',
+            'preco'  => 'required',
         ];
     }
 
