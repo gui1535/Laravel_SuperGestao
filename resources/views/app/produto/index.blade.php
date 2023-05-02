@@ -72,6 +72,7 @@
                                     <th scope="col">Descrição</th>
                                     <th class="text-center" scope="col">Nome do Fornecedor</th>
                                     <th class="text-center" scope="col">Site do Fornecedor</th>
+                                    <th class="text-center" scope="col">Preço</th>
                                     <th class="text-center" scope="col">Peso</th>
                                     <th class="text-center" scope="col">Unidade</th>
                                     <th class="text-center" scope="col">Comprimento</th>
@@ -90,6 +91,9 @@
                                             <a target="_blank" href="{{ $produto->fornecedor->site }}">
                                                 {{ $produto->fornecedor->site }}
                                             </a>
+                                        </td>
+                                        <td class="text-center" id="preco">
+                                            {{ $produto->detalhes[0]->preco_venda ?? '-' }}
                                         </td>
                                         <td class="text-center">
                                             {{ $produto->detalhes[0]->peso ?? '-' }}

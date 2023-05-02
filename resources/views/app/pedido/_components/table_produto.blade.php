@@ -4,17 +4,17 @@
             <th>Nome</th>
             <th>Descrição</th>
             <th>Fornecedor</th>
+            <th class="text-center">Preço</th>
             <th class="text-center">Comprimento</th>
             <th class="text-center">Altura</th>
             <th class="text-center">Largura</th>
             <th class="text-center">Peso</th>
-            <th class="text-center">Preço</th>
             <th class="text-center">Quantidade</th>
             <th class="text-center">Ação</th>
         </tr>
     </thead>
     <tbody>
-        @if (isset($pedido))
+        @if (isset($pedido->produtos))
             @foreach ($pedido->produtos as $prod)
                 <tr data-id="{{ $prod->produto->id }}">
                     <input type="hidden" value="{{ Crypt::encrypt($prod->produto->id) }}" name="produtos[]">
@@ -27,6 +27,9 @@
                     <td>
                         {{ $prod->produto->fornecedor->nome }}
                     </td>
+                    <td class="text-center preco">
+                        {{ $prod->produto->detalhes[0]->preco_venda ?? '-' }}
+                    </td>
                     <td class="text-center">
                         {{ $prod->produto->detalhes[0]->comprimento ?? '-' }}
                     </td>
@@ -38,9 +41,6 @@
                     </td>
                     <td class="text-center">
                         {{ $prod->produto->detalhes[0]->peso ?? '-' }}
-                    </td>
-                    <td class="text-center">
-                        {{ $prod->produto->detalhes[0]->preco_venda ?? '-' }}
                     </td>
                     <td class="d-flex justify-content-center">
                         <input type="number" value="{{ $prod->quantidade ?? '1' }}" min="1"
